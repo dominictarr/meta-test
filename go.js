@@ -2,9 +2,10 @@
 if(require.main == module){
   var log = require('logger')
     , runner = require('./runner')
-  
-    var tests = process.argv.slice(2)
+    , selector = require('./selector')
+    var tests = selector.find(process.argv.slice(2))
       , reports = []
+
     log(tests)  
 
     next()
@@ -14,7 +15,7 @@ if(require.main == module){
       if(!test)
         return finish()
       log('run:', test)
-      runner.test({filename: test }, done)
+      runner.test(test, done)
       
       function done(err,report){
         if(err) throw err

@@ -37,6 +37,12 @@ if (require.main == module) { //child side
   var payload = JSON.parse(process.argv[2])
     , errors = []
 
+  require.paths.unshift('.')
+  
+  /*
+    NEXT: make runner use adapters.  
+  */
+
   require(payload.filename)
 
   process.on('exit',function(){
