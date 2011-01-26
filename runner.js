@@ -36,6 +36,9 @@ if (require.main == module) { //child side
 
   var payload = JSON.parse(process.argv[2])
     , errors = []
+    , Report = require('./report')
+    , reporter = new Report(payload.filename)
+    , shutdown
 
   require.paths.unshift('.')
   
@@ -43,27 +46,31 @@ if (require.main == module) { //child side
     NEXT: make runner use adapters.  
   */
 
-  require(payload.filename)
+  var tests = require(payload.filename)
 
+  if(payload.adapter){
+
+    require.paths.unshift(__dirname + '/adapters')
+    var adapter = require(payload.adapter)
+    require.paths.shift(__dirname + '/adapters')
+
+    shutdown = adapter.run(tests,reporter)
+  }
   process.on('exit',function(){
-    var report = 
-        { filename: payload.filename
-        , tests: []
-        , status : 'success'
-        , errors: errors
-        }
-    fs.writeFileSync(payload.tempfile,JSON.stringify(report))
+    if(shutdown) shutdown()    
+    
+    fs.writeFileSync(payload.tempfile,JSON.stringify(reporter.report))
   })
 
 } else { 
   // parent-side
   // start child and when it exits check for the temp file, and scrape stderr
 
-  exports.test = test
+  exports.run = run
   var spawn = require('child_process').spawn
     , util = require('util')
 
-  function test(opts,cb){
+  function run(opts,cb){
         
     opts.tempfile = '/tmp/test_' + Math.round(Math.random()*10000)
     var child = spawn('node', [ __filename, JSON.stringify(opts) ])

@@ -1,0 +1,118 @@
+//expresso.node.js
+
+//test adapters/expresso
+
+/*
+  this is sticky business because expresso does not export an API, 
+  and it's interfaces changes between some versions.
+  
+  (when i first started using expresso it was at 6.2 and my tests don't run on it any more)
+*/
+
+
+var adapter = require('../adapters/expresso')
+  , helper = require('../helper')
+  , Report = require('../report')
+  , log = require('logger')
+  , assert = require('assert')
+  , it = require('it-is')  
+
+exports ['pass'] = function (finish){
+  var reporter = new Report('passing test')
+    , expects = new Report('passing test')
+    , ran = false
+    , shutdown = 
+  adapter.run({
+    'pass': function (){
+      ran = true
+    }
+  },reporter)
+
+  shutdown()
+
+  it(ran).equal(true)
+
+  log(reporter.report)
+
+  it(reporter.report).deepEqual(expects.test('pass').report)
+
+  finish()
+
+}
+
+exports ['fail'] = function (finish){
+  var reporter = new Report('failing test')
+    , expects = new Report('failing test')
+    , shutdown = 
+
+  adapter.run({
+    'fail': function (){
+      assert.ok(false,"INTENSIONAL FAIL")
+    }
+  },reporter)
+
+  shutdown()
+
+//  log(reporter.report)
+
+  it(reporter.report)
+    .has
+    ( expects
+      .test('fail', {name: "AssertionError", message: "INTENSIONAL FAIL"})
+      .report )
+
+  finish()
+
+}
+
+//*/
+
+exports ['error'] = helper.try(function (finish){
+  var reporter = new Report('error test')
+    , expects = new Report('error test')
+    , shutdown = 
+
+  adapter.run({
+    'error': function (){
+      throw new Error("INTENSIONAL ERROR")
+    }
+  },reporter)
+
+  shutdown()
+
+  it(reporter.report)
+    .has
+    ( expects
+      .test('error', {message: "INTENSIONAL ERROR"})
+      .report)
+
+  finish()
+
+})
+
+exports ['all'] = helper.try(function (finish){
+  var reporter = new Report('all test')
+    , expects = new Report('all test')
+    , shutdown = 
+
+  adapter.run({
+    'pass' : function () { }
+  , 'fail' : function () { assert.ok(false,"INTENSIONAL FAIL") }
+  , 'error': function () { throw new Error("INTENSIONAL ERROR") }
+  } , reporter)
+
+  shutdown()
+
+  it(reporter.report)
+    .has
+    ( expects
+      .test('pass')
+      .test('fail',  {name: "AssertionError", message: "INTENSIONAL FAIL"})
+      .test('error', {message: "INTENSIONAL ERROR"})
+      .report )
+
+  finish()
+
+})
+
+helper.runAsync(exports)

@@ -42,10 +42,12 @@ Report.prototype = {
     } else 
       this.tests[name].failures.push(error)
   
-    return test
+    return this
   }
 , error: function (err){
     this.report.errors.push (err)
+    
+    return this
   }
 }
 

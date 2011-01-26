@@ -87,6 +87,13 @@ test ['a Report with a global error'] = function (){
     })
 }
 
+test ['test functions are chainable'] = function (){
 
+ var r = Report(__filename)
+ 
+ it(r.test('name')).equal(r)
+ it(r.error("ERROR")).equal(r)
+
+}
 
 helper.runSync(test)

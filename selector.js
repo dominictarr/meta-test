@@ -16,6 +16,10 @@ test-adapters: 'file'
 */
 //returns [{filename: fn, adapter: a },...]
 
+var easy = require('easyfs')
+  , log = require('logger')
+  , fs = require('fs')
+
 exports.select = select 
 
 function select (filename, rules) { //returns what adapter to use
@@ -50,21 +54,19 @@ function select (filename, rules) { //returns what adapter to use
 
 exports.find = find
 
-var easy = require('easyfs')
-  , log = require('logger')
-  , fs = require('fs')
-  , isRegExp = /\/(.*?)\/([gimy]*)/
-  , isFunction = function (string){
-    if(!~string.indexOf('function'))
-      return
-    try{
-      var f = eval(string)
-      if(f instanceof Function)
-        return f
-    } catch (err){
-      return    
-    }
-   }
+var isRegExp = /\/(.*?)\/([gimy]*)/
+
+function isFunction (string){
+  if(!~string.indexOf('function'))
+    return
+  try{
+    var f = eval(string)
+    if(f instanceof Function)
+      return f
+  } catch (err){
+    return    
+  }
+ }
 
 function load (file){
   if(!easy.existsSync(file))
@@ -77,10 +79,17 @@ function parse (file){
     return
   var obj = JSON.parse(fs.readFileSync(file,'utf-8'))
 
+
+
   if(obj['test-adapters']){
     var rules = obj['test-adapters']
-    if('string' == typeof rules)
-      return require (easy.join(easy.dir(file),rules))
+    if('string' == typeof rules){
+      var local = easy.dir(fs.realpathSync(file))
+      if(rules[0] == '.')//relative path
+        return require(easy.join(local,rules))
+      return require(rules)
+      
+    }
     rules = rules.map(function (r){
       var e
       if(e = isRegExp(r)){
