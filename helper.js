@@ -42,7 +42,8 @@ function runSync(tests){
 
 //dump an error message and exit, without being intercepted by process.on('uncaughtException',...)
 function crash(error){
-  console.error("CRASH!")
+  console.log("CRASH!")
+//  console.error("CRASH!")
   console.error(error)
   process.exit(1)
 }
@@ -60,7 +61,7 @@ function TRY (func,timeout){
     try{
       func.apply(null,arguments)
     }catch(error){
-      crash(error.stack ? error.stack : error)
+      crash(error ? (error.stack ? error.stack : error) : error)
     } 
   }
 }

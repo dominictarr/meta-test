@@ -7,6 +7,8 @@
   and it's interfaces changes between some versions.
   
   (when i first started using expresso it was at 6.2 and my tests don't run on it any more)
+  
+  haha! i've fixed it though, and this adapter is compatible with tests written for 6.2 and 7+
 */
 
 
@@ -52,8 +54,6 @@ exports ['fail'] = function (finish){
   },reporter)
 
   shutdown()
-
-//  log(reporter.report)
 
   it(reporter.report)
     .has
@@ -115,4 +115,47 @@ exports ['all'] = helper.try(function (finish){
 
 })
 
+
+exports ['compatible with old and new expresso API'] = helper.try(function (finish){
+  var reporter = new Report('all test')
+    , expects = new Report('all test')
+    , shutdown = 
+
+  adapter.run({
+    'old' : function (test,before) { 
+
+      it(test).has({
+        ok            : it.function ()
+      , equal         : it.function ()
+      , notEqual      : it.function ()
+      , strictEqual   : it.function ()
+      , notStrictEqual: it.function ()
+      , deepEqual     : it.function ()
+      , notDeepEqual  : it.function ()
+      , fail          : it.function ()
+      , ifError       : it.function ()
+      })
+      
+      it(before).function()
+    }
+  , 'new' : function (before) { 
+      it(before).function()
+          
+  }
+  } , reporter)
+
+  shutdown()
+
+  it(reporter.report)
+    .has
+    ( expects
+      .test('old')
+      .test('new')
+      .report )
+
+  finish()
+
+})
+
+//*/
 helper.runAsync(exports)

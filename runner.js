@@ -77,21 +77,39 @@ if (require.main == module) { //child side
       , stderr = ''
 
     child.stdout.on('data',function(e){process.stdout.write(e)})
-    child.stderr.on('data',function(e){stderr += '' + e})
+    child.stderr.on('data',function(e){stderr += '' + e
+      process.stdout.write(e)
+    })
   
+/*
+there was an error here where it was returning a false positive sometimes.
+
+if there was a temp file, it didn't return errors from stderr
+
+make a test to check this!
+
+*/
+
     child.on('exit',function (exStatus){
       var errors = exStatus ? [stderr,exStatus]: []
       
       fs.readFile(opts.tempfile, 'utf-8', c)
       function c(err,json){
-        if(err)//file did not exist
+        if(!err)
+          fs.unlink(opts.tempfile) //delete temp file.
+
+        try {
+          var report = JSON.parse(json)
+          report.errors = [].concat(report.errors).concat(errors)
+
+          cb(null,report)
+        } catch (err){
           cb(null,{ filename: opts.filename
             , tests: []
             , status : 'error'
             , errors: errors
             })
-        else
-          cb(null,JSON.parse(json))
+        }
       }
     })
   }

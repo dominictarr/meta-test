@@ -2,29 +2,49 @@
 
 var old = require.extensions['']
   , fs = require('fs')
+  , log = require('logger')
 
 if(!old)
   require.extensions[''] = function (){}
   
-  var fn = require.resolve('expresso/bin/expresso')
-  var expresso = fs.readFileSync(fn,'utf-8')
-  
-  require.extensions[''] = old
+var fn = require.resolve('expresso/bin/expresso')
 
-  expresso = expresso.replace ("defer;", "defer = true;")
-  expresso = expresso.replace ("#!", "//#!")
+require.extensions[''] = old
+
+var expresso = fs.readFileSync(fn,'utf-8')
+
+expresso = expresso.replace ("defer;", "defer = true;")
+expresso = expresso.replace ("#!", "//#!")
+
+
+function copy(from,to){
+  for(var i in from){
+    to[i] = from[i]  
+  }
+  return to
+}
 
 exports.run = run 
 
-function run (tests,reporter){
 
-  for(var name in tests){
-    reporter.test(name) //record each test.
-  }
+function run (tests,reporter){
 
   //load expresso into this closure
 
   eval(expresso) 
+
+  // wrap each test in adapter that bridges tj's api change
+
+  Object.keys(tests).forEach(function (name){
+  
+    reporter.test(name) //record each test.
+    
+    var orig = tests[name]
+    tests[name] = function (before){
+      orig(copy(assert,before),before)
+    }
+
+  })
 
  //overwrite error handler to write report.
 
