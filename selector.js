@@ -50,6 +50,7 @@ function select (filename, rules) { //returns what adapter to use
   var e = /^.+\.(\w+)\.\w+$/(filename)
   if(e)
     return e[1]
+  throw new Error ("could not detect test type for: " + filename + ", with rules" + rules)
 }
 
 exports.find = find
@@ -75,14 +76,17 @@ function load (file){
 }
 
 function parse (file){
-  if(!easy.existsSync(file))
+  if(!easy.existsSync(file)){
     return
+    }
+  console.log("FOUND!")
+
   var obj = JSON.parse(fs.readFileSync(file,'utf-8'))
-
-
 
   if(obj['test-adapters']){
     var rules = obj['test-adapters']
+    log(rules)
+
     if('string' == typeof rules){
       var local = easy.dir(fs.realpathSync(file))
       if(rules[0] == '.')//relative path
@@ -106,12 +110,15 @@ function parse (file){
     log(rules)
     return rules
   }
+  console.log("NO RULES")
+  return []
+
 }
 
 function recurse (dir){
 
     var pJson = easy.join(dir,'package.json')
-
+    log("RECURSE",pJson)
     var adapter
     if(adapter = parse(pJson)){
       return adapter
@@ -122,10 +129,14 @@ function recurse (dir){
 }
   
 function find(filenames){
-
+  log('FILENAMES',filenames)
   return filenames.map(function (fn){
-
-    var rule = recurse(fn)
+    var _fn = fn
+    if(fn[0] != '/')
+      _fn = easy.join(process.env.PWD,fn)//here XXX
+    var rule = recurse(_fn)
+    
+    log("RULES:",rule)
   
     return {filename: fn, adapter: select(fn,rule)}
   

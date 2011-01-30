@@ -40,7 +40,7 @@ if (require.main == module) { //child side
     , reporter = new Report(payload.filename)
     , shutdown
 
-  require.paths.unshift('.')
+//  require.paths.unshift('.')
   
   /*
     NEXT: make runner use adapters.  
@@ -51,8 +51,9 @@ if (require.main == module) { //child side
   if(payload.adapter){
 
     require.paths.unshift(__dirname + '/adapters')
-    var adapter = require(payload.adapter)
-    require.paths.shift(__dirname + '/adapters')
+    console.log("%%% ADAPTER %%%",payload.adapter)
+    var adapter = require(/*'meta-test2/adapters/' + */ payload.adapter)
+//    require.paths.shift(__dirname + '/adapters')
 
     shutdown = adapter.run(tests,reporter)
   }

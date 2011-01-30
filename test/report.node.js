@@ -96,4 +96,13 @@ test ['test functions are chainable'] = function (){
 
 }
 
+test ['can call .test() only adds error if called with 2 args' ] = function (){
+
+ var r = Report(__filename)
+   , s = Report(__filename)
+ 
+ it(r.test('name').test('name').report).deepEqual(s.test('name').report)
+  
+}
+
 helper.runSync(test)

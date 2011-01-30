@@ -9,7 +9,7 @@ exports.run = run
 function run (vows,reporter){
   vows = vows.Vows
 
-  v.reporter = {
+  vows.reporter = {
     name: 'vows-adapter'
   , reset: function (){}
   , report: function (data){
@@ -27,7 +27,7 @@ function run (vows,reporter){
         reporter.test(name, test.exception)
     }
   }
-
+ }
 vows.run()
 
 return function (){} //shutdown function

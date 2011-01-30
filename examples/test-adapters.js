@@ -4,5 +4,6 @@ module.exports =
       if( -1 != filename.indexOf ("testSomethingAsync.js"))
         return 'asynct'
       }
+  , /^.*\.(\w+)\.\w+$/
   , "node" ]
 

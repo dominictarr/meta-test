@@ -39,7 +39,43 @@ exports ['find'] = function (){
     , files = 
   examples.map(function (e){
     e.filename = 
-      path.join(__dirname,'../examples/test', e.filename)
+      path.join('examples/test', e.filename)//here is problem! see also adapters/selector.js 130
+      
+      /*
+      OKAY! this is a problem handling both local, relative and absolute paths.
+      
+      this is causing problems due to different env between this test and invoking selector on cmd line.
+      
+      */
+      
+    return e.filename
+  })
+
+  var found = selector.find(files)
+
+  it(found).has(examples)  
+
+}
+
+exports ['find absolute'] = function (){
+  var examples = 
+      [ {filename: "null.node.js"           , adapter: 'node' }
+      , {filename: "syntax_error.node.js"   , adapter: 'node' }
+      , {filename: "pass.node.js"           , adapter: 'node' }
+      , {filename: "test-synct-pass.js"     , adapter: 'synct'} 
+      , {filename: "testSomethingAsync.js"  , adapter: 'asynct'} ]
+
+    , files = 
+  examples.map(function (e){
+    e.filename = 
+      path.join(__dirname, '../examples/test', e.filename)//here is problem! see also adapters/selector.js 130
+      
+      /*
+      OKAY! this is a problem handling both local, relative and absolute paths.
+      
+      this is causing problems due to different env between this test and invoking selector on cmd line.
+      
+      */
       
     return e.filename
   })
@@ -58,7 +94,7 @@ exports ['default'] = function (){
     , files = 
   examples.map(function (e){
     e.filename = 
-      path.join(__dirname, e.filename)
+      path.join(e.filename)
       
     return e.filename
   })

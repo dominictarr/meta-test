@@ -21,6 +21,8 @@ function update(old, newer){
 
 Report.prototype = {
   test: function (name,error){
+    
+  
     if(!this.tests[name]) {
       var test = 
         { name: name
@@ -39,7 +41,7 @@ Report.prototype = {
         }
 
       this.report.tests.push(this.tests[name] = test)
-    } else 
+    } else if (arguments.length > 1)
       this.tests[name].failures.push(error)
   
     return this
