@@ -1,23 +1,22 @@
 #! /usr/bin/env node 
 
 //if(require.main == module){
-var log = require('logger')
-  , runner = require('./runner')
-  , selector = require('./selector')
-  , path = require('path')
-  , files = []
+var runner = require('./runner')
+//  , selector = require('./selector')
+//  , path = require('path')
+//  , files = []
   , pretty = require('./pretty')
-
+  , parse = require('./arg-parser').parse
+  , inspect = require('render')
 var tests = [] 
   , reports = []
 
-files = process.argv.slice(2).map(function (file){
+/*files = process.argv.slice(2).map(function (file){
   return path.join(process.env.PWD,file)
 })
-tests = selector.find(files)
-
-log("TESTS",tests)
-log(__dirname)
+tests = selector.findAll(files)
+*/
+tests = parse(process.argv.slice(2))
 
 next()
 
@@ -25,7 +24,6 @@ function next (){
   var test = tests.shift()
   if(!test)
     return finish()
-  log('run:', test)
   runner.run(test, done)
   
   function done(err,report){
@@ -36,7 +34,13 @@ function next (){
 }
 
 function finish(){
-  reports.map(pretty.print)
+  console.log("Meta-Test ~ " + new Date + "\n")
+
+  reports.map(function (e){
+    pretty.print(e)
+    if(tests.depends)
+    console.log(inspect(e.depends, {multi: true}))
+  })
   console.log(pretty.bar(reports))
 }
 

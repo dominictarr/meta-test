@@ -5,7 +5,7 @@ var runner = require('../runner')
   , helper = require('../helper')
 
 exports ['run a file and make a report'] = function (finish){
-  var testFile = 'meta-test2/examples/test/pass.node.js'
+  var testFile = 'meta-test/examples/test/pass.node.js'
 
   runner.run({filename:testFile },helper.try(cb,1000))
   
@@ -39,19 +39,19 @@ function hasError(testFile,check,done){
 }
 
 exports ['run a file that errors weird'] = function (finish) {
-  hasError('meta-test2/examples/test/null.node.js',[is.ok()],finish)
+  hasError('meta-test/examples/test/null.node.js',[is.ok()],finish)
 }
 
 exports ['run a file that errors'] = function (finish) {
-  hasError('meta-test2/examples/test/error.node.js',[is.ok()],finish)
+  hasError('meta-test/examples/test/error.node.js',[is.ok()],finish)
 }
 
 exports ['run a file that errors async'] = function (finish) {
-  hasError('meta-test2/examples/test/async_error.node.js',[is.ok()],finish)
+  hasError('meta-test/examples/test/async_error.node.js',[is.ok()],finish)
 }
 
 exports ['run a file with syntax error'] = function (finish) {
-  hasError('meta-test2/examples/test/syntax_error.node.js',[is.ok()],finish)
+  hasError('meta-test/examples/test/syntax_error.node.js',[is.ok()],finish)
 }
 
 exports ['run dummy-adapter'] = function (finish){

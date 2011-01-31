@@ -1,0 +1,48 @@
+
+
+remap is not yet fully module aware
+
+I'll want to say X -> Y and have X -> Y and X/foo -> Y/foo
+
+then i'll be able to cross versions test node's userland... and node's lib.
+
+currently, it can remap individual modules.
+
+also, looses depends if there was an error during load. will need to check for that!
+
+so, first steps:
+
+cross version test single package versions.
+
+test everything on multiple platforms (node versions)
+
+
+
+so, new idea is:
+  1. install EVERY npm package, replicate registry etcet.
+  
+  2. make registry of tests, and allow people to specify tests with remaps to run.
+  
+      what this look like?
+      
+      tests: package@version\tests\*.js
+      test-adapter: [rule/adapter]
+      remaps: {from: to}
+      platform: node-version browser narwhal etc!
+      
+      return json of report.
+      
+      html view of report.
+      
+      show packages@versions tested allow remaping to different versions.
+      
+      if I let people specify whatever versions they want to run... 
+        that will both 
+          ++ get people interested
+          +  help with test priority deciding problems
+
+      push/pull hook for leting people put tests/impls in a gist or to run the tests from forks heads.
+  
+  3. then work on problem of deciding which different versions to run against what and displaying all information.
+    
+    

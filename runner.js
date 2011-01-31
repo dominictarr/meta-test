@@ -13,24 +13,13 @@ parent-side
   
   when child exits, check if temp file created, scrape std error if exit value is non zero.
 
-
-han't implemented an adapter yet, but this is enough to run node scripts. 
-
-next:
-
-  adapter: 
-    sync - simplified expresso-style but with set-in-stone api.
-    async - async_testing/nodeunit.
-
-  runner:
-    command line runner
-    plugin renderer
-    
-  I should make the CLI first, so I can start using it. then i write node test scripts for everything else.
 */
 
 var Report = require('./report')
+  , Remapper = new require('remap/remapper')
   , fs = require('fs')
+  , log = require('logger')
+  , untangle = require('trees/untangle2')
 
 if (require.main == module) { //child side
 
@@ -39,28 +28,27 @@ if (require.main == module) { //child side
     , Report = require('./report')
     , reporter = new Report(payload.filename)
     , shutdown
-
-//  require.paths.unshift('.')
-  
-  /*
-    NEXT: make runner use adapters.  
-  */
-
-  var tests = require(payload.filename)
-
-  if(payload.adapter){
+    , r = new Remapper(module, payload.remap)
+    , failed
+    , tests
+  try{
+    tests = r.require(payload.filename)
+  } catch(error){
+    failed = true
+    reporter.error(error)  
+  }
+  if(!failed && payload.adapter){
 
     require.paths.unshift(__dirname + '/adapters')
-    console.log("%%% ADAPTER %%%",payload.adapter)
-    var adapter = require(/*'meta-test2/adapters/' + */ payload.adapter)
-//    require.paths.shift(__dirname + '/adapters')
+
+    var adapter = require(payload.adapter)
 
     shutdown = adapter.run(tests,reporter)
   }
   process.on('exit',function(){
     if(shutdown) shutdown()    
-    
-    fs.writeFileSync(payload.tempfile,JSON.stringify(reporter.report))
+    reporter.report.depends = r.depends
+    fs.writeFileSync(payload.tempfile,untangle.stringify(reporter.report))
   })
 
 } else { 
@@ -82,15 +70,6 @@ if (require.main == module) { //child side
       process.stdout.write(e)
     })
   
-/*
-there was an error here where it was returning a false positive sometimes.
-
-if there was a temp file, it didn't return errors from stderr
-
-make a test to check this!
-
-*/
-
     child.on('exit',function (exStatus){
       var errors = exStatus ? [stderr,exStatus]: []
       
@@ -100,9 +79,8 @@ make a test to check this!
           fs.unlink(opts.tempfile) //delete temp file.
 
         try {
-          var report = JSON.parse(json)
+          var report = untangle.parse(json)
           report.errors = [].concat(report.errors).concat(errors)
-
           cb(null,report)
         } catch (err){
           cb(null,{ filename: opts.filename

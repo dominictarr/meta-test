@@ -28,7 +28,7 @@ exports ['simple selector'] = function (){
 
 var log = require('logger')
 
-exports ['find'] = function (){
+exports ['findAll'] = function (){
   var examples = 
       [ {filename: "null.node.js"           , adapter: 'node' }
       , {filename: "syntax_error.node.js"   , adapter: 'node' }
@@ -39,7 +39,7 @@ exports ['find'] = function (){
     , files = 
   examples.map(function (e){
     e.filename = 
-      path.join('examples/test', e.filename)//here is problem! see also adapters/selector.js 130
+      path.join(__dirname,'../examples/test', e.filename)//here is problem! see also adapters/selector.js 130
       
       /*
       OKAY! this is a problem handling both local, relative and absolute paths.
@@ -51,13 +51,13 @@ exports ['find'] = function (){
     return e.filename
   })
 
-  var found = selector.find(files)
+  var found = selector.findAll(files)
 
   it(found).has(examples)  
 
 }
 
-exports ['find absolute'] = function (){
+exports ['findAll absolute'] = function (){
   var examples = 
       [ {filename: "null.node.js"           , adapter: 'node' }
       , {filename: "syntax_error.node.js"   , adapter: 'node' }
@@ -80,7 +80,7 @@ exports ['find absolute'] = function (){
     return e.filename
   })
 
-  var found = selector.find(files)
+  var found = selector.findAll(files)
 
   it(found).has(examples)  
 
@@ -99,7 +99,7 @@ exports ['default'] = function (){
     return e.filename
   })
 
-  var found = selector.find(files)
+  var found = selector.findAll(files)
 
   it(found).has(examples)  
 

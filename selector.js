@@ -17,10 +17,13 @@ test-adapters: 'file'
 //returns [{filename: fn, adapter: a },...]
 
 var easy = require('easyfs')
-  , log = require('logger')
   , fs = require('fs')
+  , log = require('logger')
+  , inspect = require('sys').inspect
 
 exports.select = select 
+exports.find = find
+exports.findAll = findAll
 
 function select (filename, rules) { //returns what adapter to use
 
@@ -50,10 +53,9 @@ function select (filename, rules) { //returns what adapter to use
   var e = /^.+\.(\w+)\.\w+$/(filename)
   if(e)
     return e[1]
-  throw new Error ("could not detect test type for: " + filename + ", with rules" + rules)
+  throw new Error ("could not detect test type for: " + filename + ", with rules " + inspect(rules))
 }
 
-exports.find = find
 
 var isRegExp = /\/(.*?)\/([gimy]*)/
 
@@ -79,13 +81,13 @@ function parse (file){
   if(!easy.existsSync(file)){
     return
     }
-  console.log("FOUND!")
+
+//  log(file)
 
   var obj = JSON.parse(fs.readFileSync(file,'utf-8'))
 
   if(obj['test-adapters']){
     var rules = obj['test-adapters']
-    log(rules)
 
     if('string' == typeof rules){
       var local = easy.dir(fs.realpathSync(file))
@@ -107,10 +109,8 @@ function parse (file){
       }
       return r
     })
-    log(rules)
     return rules
   }
-  console.log("NO RULES")
   return []
 
 }
@@ -118,7 +118,9 @@ function parse (file){
 function recurse (dir){
 
     var pJson = easy.join(dir,'package.json')
-    log("RECURSE",pJson)
+
+//    log(pJson)
+
     var adapter
     if(adapter = parse(pJson)){
       return adapter
@@ -127,23 +129,19 @@ function recurse (dir){
     if(dir)
       return recurse(easy.join(dir,'..'))
 }
-  
-function find(filenames){
-  log('FILENAMES',filenames)
-  return filenames.map(function (fn){
-    var _fn = fn
-    if(fn[0] != '/')
-      _fn = easy.join(process.env.PWD,fn)//here XXX
-    var rule = recurse(_fn)
-    
-    log("RULES:",rule)
-  
-    return {filename: fn, adapter: select(fn,rule)}
-  
-  })
 
+
+
+function find(fn,dir){
+  var _fn = fn
+  if(fn[0] != '/')
+    _fn = easy.join(dir,fn)
+  var rule = recurse(_fn)
+  
+  return {filename: fn, adapter: select(fn,rule)}
 }
 
-
-
+function findAll(filenames){
+  return filenames.map(function (f){return find(f,process.env.PWD)})
+}
 
