@@ -10,7 +10,7 @@ function parse(cmd,dir){
    parser.parse(cmd.split(' '),dir)
  
  return function (list){
-  it(parsed)
+  it(parsed.tests)
     .deepEqual(
       list.map(function (e){
         e.filename = path.join(dir,e.filename)  
@@ -64,7 +64,15 @@ exports ['remaps'] = function (){
     , {filename:'examples/test/simple.vows.js', adapter: 'vows', remap: {"a.js": "b.js" } }
     , {filename:'examples/test/simple.nodeunit.js', adapter: 'nodeunit'}
     ] )
+}
 
+exports ['report'] = function (){
+    var parsed = 
+   parser.parse("-logger json".split(' '),dir)
+  it(parsed)
+    .has({
+      logger: 'json'
+    })
 
 }
 

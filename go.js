@@ -10,14 +10,17 @@ var runner = require('./runner')
   , inspect = require('render')
 var tests = [] 
   , reports = []
-
+  , parsed
+  , log = require('logger')
 /*files = process.argv.slice(2).map(function (file){
   return path.join(process.env.PWD,file)
 })
 tests = selector.findAll(files)
 */
-tests = parse(process.argv.slice(2))
+parsed = parse(process.argv.slice(2))
+tests = parsed.tests
 
+log(tests)
 next()
 
 function next (){
@@ -37,7 +40,11 @@ function finish(){
   console.log("Meta-Test ~ " + new Date + "\n")
 
   reports.map(function (e){
-    pretty.print(e)
+    if(parsed.logger == 'pretty')
+      pretty.print(e)
+    else
+      console.log(inspect(e, {multi: true}))
+      
     if(tests.depends)
     console.log(inspect(e.depends, {multi: true}))
   })

@@ -39,7 +39,7 @@ function hasError(testFile,check,done){
 }
 
 exports ['run a file that errors weird'] = function (finish) {
-  hasError('meta-test/examples/test/null.node.js',[is.ok()],finish)
+  hasError('meta-test/examples/test/null.node.js',[is.equal(null)],finish)
 }
 
 exports ['run a file that errors'] = function (finish) {
@@ -56,7 +56,7 @@ exports ['run a file with syntax error'] = function (finish) {
 
 exports ['run dummy-adapter'] = function (finish){
 
-  runner.run({filename: './examples/test/pass.node.js', adapter: './examples/dummy-adapter' }, check )
+  runner.run({filename: './examples/test/pass.node.js', adapter: '../examples/dummy-adapter' }, check )
   
   function check (err,report){
     it(report)
@@ -71,7 +71,6 @@ exports ['run dummy-adapter'] = function (finish){
           , failures: [9327953] }
         ]
       })
-  
   }
 }
 

@@ -82,6 +82,8 @@ if (require.main == module) { //child side
         try {
           var report = untangle.parse(json)
           report.errors = [].concat(report.errors).concat(errors)
+          if(report.errors.length)
+            report.status = 'error'
           cb(null,report)
         } catch (err){
           cb(null,{ filename: opts.filename

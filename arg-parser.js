@@ -38,6 +38,8 @@ parser
     remaps = undefined
   })
   .describe('stop remapping modules.')
+  .option('logger','l',1)
+  .describe('how to display output .','[pretty|json]')
   .arg(addTest)
   
   Object.keys(adapters).forEach(function (e){
@@ -73,5 +75,8 @@ exports.parse = function (args,currentDir){
   adapter = undefined
   if(obj.depends)
     r.depends = true
-  return r
+  return {
+    tests: r
+  , logger: obj.logger || 'pretty'
+  }
 }

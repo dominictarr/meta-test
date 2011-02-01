@@ -86,6 +86,35 @@ test ['a Report with a global error'] = function (){
     , status: Report.status.error
     })
 }
+test ['a Report with a global string error'] = function (){
+  var r = Report(__filename)
+    , err = "A STRING ERROR, STD ERR DUMP (FOR EXAMPLE)"
+
+  r.error(err)
+
+  it(r.report)
+    .has({
+      filename: __filename
+    , tests: is.deepEqual([])
+    , errors: [is.equal(err)]
+    , status: Report.status.error
+    })
+}
+
+test ['a Report with a global string error'] = function (){
+  var r = Report(__filename)
+    , err = undefined
+
+  r.error(err)
+
+  it(r.report)
+    .has({
+      filename: __filename
+    , tests: is.deepEqual([])
+    , errors: is.deepEqual([undefined])
+    , status: Report.status.error
+    })
+}
 
 test ['test functions are chainable'] = function (){
 
