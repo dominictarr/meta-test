@@ -16,33 +16,41 @@ var Nihop = require('nih-op')
     , 'nodeunit': 'use nodeunit' }
   , remaps
   , remapFrom
-parser
+
+  parser
   .option('search','s',0).do(function (){
-    adapter = undefined
-  })
+      adapter = undefined
+    })
   .describe('search for test adapter from filename / package.json')
+
   .option('depends','d',0)
   .describe('display dependencies of tests')
+
   .option('remap','r',1).do(function (value){
-    remapFrom = value
-  })
+      remapFrom = value
+    })
   .describe('remap a module/package from this...', '[from]')
+
   .option('to','t',1).do(function (value){
-    remaps = remaps || {}
-    if(!remapFrom)
-      throw "got --to " + value + " but did not have a -remap X"
-    remaps[remapFrom] = value
-  })
+      remaps = remaps || {}
+      if(!remapFrom)
+        throw "got --to " + value + " but did not have a -remap X"
+      remaps[remapFrom] = value
+    })
   .describe('...to this','[to]')
+
   .option('unmap','u',0).do(function (value){
-    remaps = undefined
-  })
+      remaps = undefined
+    })
   .describe('stop remapping modules.')
+
   .option('logger','l',1)
   .describe('how to display output .','[pretty|json]')
   .default('pretty')
+
   .option('timeout','t',1)
   .describe('force test to finish timeout. (default 30 seconds)','[millseconds]')
+
   .arg(addTest)
   
   Object.keys(adapters).forEach(function (e){
