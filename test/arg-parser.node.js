@@ -66,14 +66,20 @@ exports ['remaps'] = function (){
     ] )
 }
 
-exports ['report'] = function (){
-    var parsed = 
-   parser.parse("-logger json".split(' '),dir)
-  it(parsed)
+exports ['report & timeout'] = function (){
+  it(parser.parse("-logger json -timeout 1e3".split(' '),dir))
     .has({
       logger: 'json'
+    , timeout: 1000
     })
 
+  //logger should default to 'pretty'
+
+  it(parser.parse("-timeout 1000".split(' '),dir))
+    .has({
+      logger: 'pretty'
+    , timeout: 1000
+    })
 }
 
 

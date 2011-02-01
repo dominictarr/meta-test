@@ -71,6 +71,25 @@ exports ['run dummy-adapter'] = function (finish){
           , failures: [9327953] }
         ]
       })
+    finish()
+  }
+}
+//*/
+exports ['stop child after timeout'] = function (finish){
+
+  runner.run({filename: './examples/test/hang.node.js', adapter: 'node', timeout: 1e3 }, check )
+
+  var timer = 
+    setTimeout(function (){helper.crash("'stop child after timeout' TIMED OUT AFTER 5 SECONDS")},5e3)
+    
+  function  check(err,report){
+    clearTimeout(timer)
+    
+    it(report)
+      .has({  
+        errors: [{ message: it.matches(/did not complete/) }]
+      })
+      
   }
 }
 

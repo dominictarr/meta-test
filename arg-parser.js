@@ -40,6 +40,9 @@ parser
   .describe('stop remapping modules.')
   .option('logger','l',1)
   .describe('how to display output .','[pretty|json]')
+  .default('pretty')
+  .option('timeout','t',1)
+  .describe('force test to finish timeout. (default 30 seconds)','[millseconds]')
   .arg(addTest)
   
   Object.keys(adapters).forEach(function (e){
@@ -75,8 +78,6 @@ exports.parse = function (args,currentDir){
   adapter = undefined
   if(obj.depends)
     r.depends = true
-  return {
-    tests: r
-  , logger: obj.logger || 'pretty'
-  }
+  obj.tests = r
+  return obj
 }

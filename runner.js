@@ -43,16 +43,18 @@ if (require.main == module) { //child side
     r.require.paths.unshift(__dirname + '/adapters')
 
     var adapter = r.require(__dirname + '/adapters/' +payload.adapter)
-  
+
     shutdown = adapter.run(tests,reporter)
   }
   process.on('exit',function(){
-    if(shutdown) shutdown()    
+    if(shutdown) shutdown()
+    
     reporter.report.depends = r.depends
+
     fs.writeFileSync(payload.tempfile,untangle.stringify(reporter.report))
   })
 
-} else { 
+} else {
   // parent-side
   // start child and when it exits check for the temp file, and scrape stderr
 
@@ -61,19 +63,29 @@ if (require.main == module) { //child side
     , util = require('util')
 
   function run(opts,cb){
-        
     opts.tempfile = '/tmp/test_' + Math.round(Math.random()*10000)
     var child = spawn('node', [ __filename, JSON.stringify(opts) ])
       , stderr = ''
+      , errors = []
 
     child.stdout.on('data',function(e){process.stdout.write(e)})
     child.stderr.on('data',function(e){stderr += '' + e
       process.stdout.write(e)
     })
   
+    var timeToRun = opts.timeout || 30e3 //default to 30 seconds timeout
+      , timer = 
+          setTimeout(function stop (){
+            child.kill()
+            errors.push(new Error("test '" + opts.filename + "' did not complete in under " + timeToRun + " milliseconds"))
+          },timeToRun)
+
     child.on('exit',function (exStatus){
-      var errors = exStatus ? [stderr,exStatus]: []
-      
+      if(exStatus){
+        errors.push(stderr)
+        errors.push(exStatus)
+      }
+      clearTimeout(timer)
       fs.readFile(opts.tempfile, 'utf-8', c)
       function c(err,json){
         if(!err)
