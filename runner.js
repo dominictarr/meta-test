@@ -31,18 +31,19 @@ if (require.main == module) { //child side
     , r = new Remapper(module, payload.remap)
     , failed
     , tests
+
+
   try{
     tests = r.require(payload.filename)
   } catch(error){
     failed = true
     reporter.error(error)  
   }
-  if(!failed && payload.adapter){
+  if(!failed && payload.adapter) {
+    r.require.paths.unshift(__dirname + '/adapters')
 
-    require.paths.unshift(__dirname + '/adapters')
-
-    var adapter = require(payload.adapter)
-
+    var adapter = r.require(__dirname + '/adapters/' +payload.adapter)
+  
     shutdown = adapter.run(tests,reporter)
   }
   process.on('exit',function(){
