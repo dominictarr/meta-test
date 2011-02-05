@@ -82,8 +82,6 @@ function parse (file){
     return
     }
 
-//  log(file)
-
   var obj = JSON.parse(fs.readFileSync(file,'utf-8'))
 
   if(obj['test-adapters']){
@@ -119,14 +117,12 @@ function recurse (dir){
 
     var pJson = easy.join(dir,'package.json')
 
-//    log(pJson)
-
     var adapter
     if(adapter = parse(pJson)){
       return adapter
     }
 
-    if(dir)
+    if(dir &&  dir != '/')
       return recurse(easy.join(dir,'..'))
 }
 
