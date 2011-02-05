@@ -1,21 +1,21 @@
 
 
-var old = require.extensions['']
-  , fs = require('fs')
+var/* old = require.extensions['']
+  ,*/ fs = require('fs')
   , log = require('logger')
 
-if(!old)
-  require.extensions[''] = function (){}
+/*if(!old)
+  require.extensions[''] = function (){}*/
   
-var fn = require.resolve('expresso/bin/expresso')
+//var fn = require.resolve('expresso/bin/expresso')
 
-require.extensions[''] = old
+//require.extensions[''] = old //do this differently so it works with 0.2.x
 
-var expresso = fs.readFileSync(fn,'utf-8')
+var expresso = fs.readFileSync(__dirname+'/lib/expresso','utf-8')
+//var expresso = fs.readFileSync(fn,'utf-8')
 
 expresso = expresso.replace ("defer;", "defer = true;")
 expresso = expresso.replace ("#!", "//#!")
-
 
 function copy(from,to){
   for(var i in from){
