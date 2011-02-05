@@ -100,6 +100,27 @@ test ['a Report with a global string error'] = function (){
     , status: Report.status.error
     })
 }
+test ['any thrown non AssertionError is an error status'] = function (){
+  var errors = [[], new Error, "hello", false, 324, undefined, null]
+  
+  it(errors)
+    .every(function (actual){
+
+      r = Report(__filename)
+      r.error(actual)
+      it(r.report.status).equal(Report.status.error)
+
+    })
+    .every(function (actual){
+    
+      r = Report(__filename)
+      r.test("test",actual)
+      it(r.report.status).equal(Report.status.error)
+
+    })
+
+}
+
 
 test ['a Report with a global string error'] = function (){
   var r = Report(__filename)
@@ -133,5 +154,17 @@ test ['can call .test() only adds error if called with 2 args' ] = function (){
  it(r.test('name').test('name').report).deepEqual(s.test('name').report)
   
 }
+
+test ['add metadata' ] = function (){
+
+ var r = Report(__filename)
+   , s = Report(__filename)
+ 
+ it(r.meta('returnThis','value')).equal(r)//return this so it's chainable.
+ 
+ it(r.report).has({meta:{'returnThis': 'value'}})
+  
+}
+
 
 helper.runSync(test)

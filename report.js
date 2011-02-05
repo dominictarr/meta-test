@@ -28,7 +28,6 @@ Report.prototype = {
         { name: name
         , failures: arguments.length > 1 ? [error] : []
         , get status (){
-//            return this.failures.length > 0 ? stati.error : stati.success
             var stat = stati.success
             for(var i in this.failures){
               if(!(this.failures[i] && this.failures[i].name &&  this.failures[i].name == "AssertionError"))
@@ -51,6 +50,11 @@ Report.prototype = {
     
     return this
   }
+, meta: function (key,value){
+    this.report.meta[key] = value
+    
+    return this
+  }
 }
 
 function Report (filename){
@@ -58,6 +62,9 @@ function Report (filename){
   this.report = 
     { filename: filename
     , errors: []
+    , os: process.platform
+    , version: process.version
+    , meta: {}
     , get status (){
         var stat = stati.success
         if(this.errors.length)
