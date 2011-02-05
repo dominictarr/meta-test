@@ -4,6 +4,7 @@ var Nihop = require('nih-op')
   , selector = require('./selector')
   , adapter
   , tests = []
+  , platform = require('./platform')
   , parser = new Nihop("meta-test [opts/files]\n", "~~~ Meta-Test ~~~\n\n  for additional docs see:\n  http://github.com/dominictarr/meta-test\n")
   , pwd = process.env.PWD
   , path = require('path')
@@ -16,6 +17,8 @@ var Nihop = require('nih-op')
     , 'nodeunit': 'use nodeunit' }
   , remaps
   , remapFrom
+  , version
+  , command
 
   parser
   .option('search','s',0).do(function (){
@@ -48,6 +51,15 @@ var Nihop = require('nih-op')
   .describe('how to display output .','[pretty|json]')
   .default('pretty')
 
+  .option('version','v',1).do(function (value){
+      version = value
+      command = platform.command(value)
+    if(!command)
+      throw ("meta-test does not know node version '" +  version + "' \n"
+      + "try one of:\n" + platform.list.join('\n'))
+    })
+  .describe('node version to test against\n   one of: [' + require('./platform').list.join(',') + ']','[version]')
+
   .option('timeout','t',1)
   .describe('force test to finish timeout. (default 30 seconds)','[millseconds]')
 
@@ -74,15 +86,29 @@ function addTest (test){
   if(remaps)
     payload.remap = remaps
   
+  payload.version = version || process.version
+
+  payload.command = command || 'node'
   tests.push(payload)
 }
 
 exports.parse = function (args,currentDir){
   pwd = currentDir || pwd 
 
+  var all = {}
+
   var obj = parser.parse(args)
+
+  all.timeout = obj.timeout
+//  all.version = obj.version
+//  all.command = obj.version ? require('./platform').command(obj.version) : 'node'
+
   var r = tests
   tests = []
+  r.forEach(function (e){
+    e.__proto__ = all
+  })
+ 
   adapter = undefined
   if(obj.depends)
     r.depends = true

@@ -20,13 +20,14 @@ tests = selector.findAll(files)
 parsed = parse(process.argv.slice(2))
 tests = parsed.tests
 
-log(tests)
 next()
 
 function next (){
   var test = tests.shift()
   if(!test)
     return finish()
+/*  if(parsed.timeout)
+    test.timeout = parsed.timeout*/
   runner.run(test, done)
   
   function done(err,report){
@@ -46,7 +47,7 @@ function finish(){
       console.log(inspect(e, {multi: true}))
       
     if(tests.depends)
-    console.log(inspect(e.depends, {multi: true}))
+      console.log(inspect(e.depends, {multi: true}))
   })
   console.log(pretty.bar(reports))
 }

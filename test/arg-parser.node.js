@@ -11,7 +11,7 @@ function parse(cmd,dir){
  
  return function (list){
   it(parsed.tests)
-    .deepEqual(
+    .has(
       list.map(function (e){
         e.filename = path.join(dir,e.filename)  
         return e
@@ -25,16 +25,16 @@ var dir = __dirname + '/..'
 exports ['parse args'] = function (){
 
   parse('-node arg-parser.node.js',dir + '/test')
-  ( [ {filename:'./arg-parser.node.js', adapter: 'node'} ] )  
+  ( [ {filename:'./arg-parser.node.js', adapter: 'node',command: 'node'} ] )  
 
   parse('-node arg-parser.js -expresso test-something.js',dir + '/test')
-  ( [ {filename:'./arg-parser.js', adapter: 'node'}
-    , {filename:'./test-something.js', adapter: 'expresso'}
+  ( [ {filename:'./arg-parser.js', adapter: 'node',command: 'node'}
+    , {filename:'./test-something.js', adapter: 'expresso',command: 'node'}
     ] )  
 
   parse('-node arg-parser.js -expresso test-something.js',dir + '/test')
-  ( [ {filename:'./arg-parser.js', adapter: 'node'}
-    , {filename:'./test-something.js', adapter: 'expresso'}
+  ( [ {filename:'./arg-parser.js', adapter: 'node',command: 'node'}
+    , {filename:'./test-something.js', adapter: 'expresso',command: 'node'}
     ] )  
 
 }
@@ -42,8 +42,8 @@ exports ['parse args'] = function (){
 exports ['detect adapter'] = function (){
 
   parse('test/arg-parse.node.js examples/test/simple.vows.js',dir)
-  ( [ {filename:'test/arg-parse.node.js', adapter: 'node'}
-    , {filename:'examples/test/simple.vows.js', adapter: 'vows'}
+  ( [ {filename:'test/arg-parse.node.js', adapter: 'node',command: 'node'}
+    , {filename:'examples/test/simple.vows.js', adapter: 'vows',command: 'node'}
     ] )
 }
 
@@ -56,13 +56,13 @@ remaps
 exports ['remaps'] = function (){
 
   parse('--remap a.js --to b.js test/arg-parse.node.js',dir)
-  ( [ {filename:'test/arg-parse.node.js', adapter: 'node', remap: {"a.js": "b.js" } }
+  ( [ {filename:'test/arg-parse.node.js', adapter: 'node', remap: {"a.js": "b.js" } ,command: 'node'}
     ] )
 
   parse('-r a.js -t b.js test/arg-parse.node.js examples/test/simple.vows.js -u examples/test/simple.nodeunit.js',dir)
-  ( [ {filename:'test/arg-parse.node.js', adapter: 'node', remap: {"a.js": "b.js" } }
-    , {filename:'examples/test/simple.vows.js', adapter: 'vows', remap: {"a.js": "b.js" } }
-    , {filename:'examples/test/simple.nodeunit.js', adapter: 'nodeunit'}
+  ( [ {filename:'test/arg-parse.node.js', adapter: 'node', command: 'node', remap: {"a.js": "b.js" } }
+    , {filename:'examples/test/simple.vows.js', adapter: 'vows', command: 'node', remap: {"a.js": "b.js" } }
+    , {filename:'examples/test/simple.nodeunit.js', adapter: 'nodeunit', command: 'node', }
     ] )
 }
 
@@ -80,6 +80,20 @@ exports ['report & timeout'] = function (){
       logger: 'pretty'
     , timeout: 1000
     })
+
+  it(parser.parse("--version v0.3.0 hello.node.js".split(' '),dir))
+    .has({
+/*      version: 'v0.3.0'
+    , */tests: [{version :'v0.3.0', command: it.typeof('string')}]
+    })
+
+  //enable multiple versions per run...
+
+  it(parser.parse("--version v0.3.0 hello.node.js --version v0.3.7 hello.node.js".split(' '),dir))
+    .has({
+     tests: [{version :'v0.3.0', command: it.typeof('string')}, {version :'v0.3.7', command: it.typeof('string')}]
+    })
+
 }
 
 
