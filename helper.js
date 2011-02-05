@@ -42,7 +42,9 @@ function runSync(tests){
 
 //dump an error message and exit, without being intercepted by process.on('uncaughtException',...)
 function crash(error){
-  console.log("CRASH!")
+  console.log("CRASH!>>")
+  console.log(error)
+  console.log("<<CRASH!")
 //  console.error("CRASH!")
   console.error(error)
   process.exit(1)
@@ -66,6 +68,7 @@ function TRY (func,timeout){
   }
 }
 
+//setInterval(function (){console.log('.')},50)
 
 function runAsync(tests){
   var names = Object.keys(tests)
@@ -75,9 +78,9 @@ function runAsync(tests){
   function next(){
     var name = names.shift()
     if(name){
-      console.log(name)
       tests[name](function (){process.nextTick(next)})
-    }else
+//      tests[name](next)
+    } else
       console.log('*all passed*')
   }
 }

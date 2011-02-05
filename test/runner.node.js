@@ -3,6 +3,7 @@ var runner = require('../runner')
   , it, is = it = require('it-is')
   , log = require('logger')
   , helper = require('../helper')
+  , platform = require('../platform')
 
 exports ['run a file and make a report'] = function (finish){
   var testFile = 'meta-test/examples/test/pass.node.js'
@@ -89,10 +90,34 @@ exports ['stop child after timeout'] = function (finish){
       .has({  
         errors: [{ message: it.matches(/did not complete/) }]
       })
-      
+
+
+    finish()      
   }
 }
 
+exports ['run multiple node versions'] = function (finish){
+
+
+
+  var target = (process.version == 'v0.3.2') ? 'v0.3.1' : 'v0.3.2'
+
+  var testFile = 'meta-test/examples/test/pass.node.js'
+
+  runner.run({filename:testFile, command: platform.command(target)},helper.try(cb,1000))
+  
+  function cb(err,report){
+    it(report)
+      .has({
+        filename: testFile
+      , tests: is.deepEqual([])
+      , errors: is.deepEqual([])
+      , status: 'success'
+      , version: target
+      })
+    finish()
+  }
+
+}
+
 helper.runAsync(exports)
-
-

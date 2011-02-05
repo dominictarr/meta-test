@@ -35,14 +35,16 @@ function makeBeforeExit(timeout) {
     doBefore = before
   }
 }
-
+var assert = require('assert')
 function check(report,name,status,tests){
+//  console.log('check')
     it(report)
       .has({
         filename: name
       , status: status
       , tests: tests
-      })    
+      })
+  console.log('checked')
 }
 
 var asynct = require('../adapters/asynct')
@@ -76,7 +78,16 @@ exports ['error'] = function (finish){
     , shutdown = 
       asynct.run({
        'error1': helper.try(function (test){
-          process.nextTick(function (){throw new Error ("ASYNC ERROR") })
+      //  try{
+          setTimeout(
+          //process.nextTick(
+          function (){
+          console.log("throw!")
+
+          throw new Error ("ASYNC ERROR") },0)
+  //        }catch (error){
+//            throw "ERROR THREW SYNC!!!"
+    //      }
         },500)
       },reporter)
 
@@ -99,7 +110,7 @@ exports ['failure'] = function (finish){
 
   asynct.run({
    'fail1': helper.try(function (test){
-      process.nextTick(function (){ it(0).equal(1) })
+      setTimeout(function (){ it(0).equal(1) },0)
     },500)
   },reporter)
 
@@ -158,10 +169,10 @@ exports ['double error'] = function (finish){
    'badfinish3': helper.try(function (test){
       process.nextTick(function (){throw new Error("FIRST ERROR")})
       process.nextTick(function (){throw new Error("SEOND ERROR")})
-    },500)
+    },200)
   },reporter) 
 
-  setTimeout(done,300)
+  setTimeout(helper.try(done),300)
 
   function done(){
     shutdown()
@@ -178,7 +189,7 @@ exports ['double error'] = function (finish){
   }
 }
 
-
+/*
 exports ['finish then error'] = function (finish){
   var reporter = new Report('finish then error')
     , finished = false
@@ -188,22 +199,37 @@ exports ['finish then error'] = function (finish){
    'badfinish4': helper.try(function (test){
       process.nextTick(test.finish)
       process.nextTick(function (){throw new Error("ERROR AFTER FINISH")})
-    },500)
+    },200)
   },reporter)
 
-  setTimeout(done,400)
+  setTimeout(helper.try(done),400)
 
   function done(){
-    console.log("DONE")
-    check
-    ( reporter.report, 'finish then error','error',
-      [ isError('badfinish4', { message:"ERROR AFTER FINISH" } ) ] )
-
+    shutdown()
+    console.log("DONE$$$$$$$$$$$$$" + finished)
+//    throw 'crazy error'
+    if(finished)
+      console.log("***********************")
+      
     it(finished).equal(false)
 
     finished = true
 
+    check
+    ( reporter.report, 'finish then error','error',
+      [ isError('badfinish4', { message:"ERROR AFTER FINISH" } ) ] )
+
+    console.log("CHECKED")
+
+
+    console.log("finished!")
+
+
+    console.log("ABOUT TO CALL FINISH")
     finish()  
+
+    console.log("called finish")
+
   }
 }
   //*/

@@ -7,9 +7,9 @@ var assert = require('assert')
 exports.run = run
 
 function run(tests,reporter){
-  var names = Object.keys(tests)
+  var x, names = x = Object.keys(tests)
   var currentNext, currentName
-  
+
   function handler (error){
     if(currentName) {
       reporter.test(currentName,error)
@@ -24,9 +24,11 @@ function run(tests,reporter){
   next()
  
   function next(){
-    if(!names.length)
+    if(!names.length){
+      console.log('wait for exit')
       return //stop starting tests and wait for shutdown to be called.
-
+    }
+    console.log(names)
     var name = currentName = names.shift()
       , finished = false
       , currentNext = safeNext
