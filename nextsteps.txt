@@ -1,11 +1,41 @@
 
+UPDATE:
+
+got node version option in meta-test
+
+remap not compatible (currently) with 0.2.x
+
+got weird infinite loops with 0.2.0 in meta-test/test/asynct.node.js
+
+
+ok, wrapper for remapper: NpmRemapper
+
+give it orders like {package@version1: package@version2}
+if changes this into
+if it detects you loading:
+  $NPM_PATH/package/version1/...
+it returns 
+  $NPM_PATH/package/version2/...
+instead.
+
+there may be different files in different versions, but it should only hook the first one, and the rest should be fine.
+
+..or intercept package.* and redirect to $NPM_PATH/package/version/package that should work...
+
+will need a bunch of packages with plenty of dependencies to test this on. (I know, i'll just make some examples and publish them to use in my tests)
+
+...what about when testing different versions of the same package... will need to set it to ignore particular paths...
+
+package\tests etc...
+
+that should get remap working in 0.3.X ... rewrite to compatible with 0.2.0 (might not be that hard...)
+
+
 
 remap is not yet fully module aware
 
 I'll want to say X -> Y and have X -> Y and X/foo -> Y/foo
-
 then i'll be able to cross versions test node's userland... and node's lib.
-
 currently, it can remap individual modules.
 
 also, looses depends if there was an error during load. will need to check for that!
@@ -13,14 +43,14 @@ also, looses depends if there was an error during load. will need to check for t
 so, first steps:
 
 cross version test single package versions.
-
 test everything on multiple platforms (node versions)
 
+OH and if I release a tool for checking versions of your dependencies, 
+  people will use that before they publish.
 
 
 so, new idea is:
   1. install EVERY npm package, replicate registry etcet.
-  
   2. make registry of tests, and allow people to specify tests with remaps to run.
   
       what this look like?
@@ -28,10 +58,9 @@ so, new idea is:
       tests: package@version\tests\*.js
       test-adapter: [rule/adapter]
       remaps: {from: to}
-      platform: node-version browser narwhal etc!
+      platform: node-version browser narwhal etc! /*implement this next!*/
       
       return json of report.
-      
       html view of report.
       
       show packages@versions tested allow remaping to different versions.
@@ -46,3 +75,26 @@ so, new idea is:
   3. then work on problem of deciding which different versions to run against what and displaying all information.
     
     
+    
+test registry will have test records,
+
+which will look like meta-test/runner's {filename: ... remap: ... adapter: ... timeout: ...}
+
+but have a few extra values. 
+  status: requested started complete
+  report: the result of running this test (which will have date)
+  sortedDeps: topological sort of depends.
+
+  a test runner process will query the api and then run the test, posting back the result.
+
+so, i'll make a database of all of this, 
+
+  then aggregating useful informations about the test results -- i'll just make something simple.
+  and deciding which tests to run become two seperate problems. -- let users schedule whatever tests they like.
+  
+todo:
+  set up platform option in meta-test (running different node versions)
+  enhance remap to be more aware of modules... make it understand npm paths 
+  and make remapping easier package@Major.Minor.Patch (detect @ and infer it's a npm package)
+  
+  then, release into the wild!

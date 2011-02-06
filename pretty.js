@@ -49,9 +49,10 @@ function tests(tests){
 function toString(report){
 
   var fn = report.filename.replace(process.env.PWD + '/','')
-
+//  console.log(report.version)
   return para
-  ( styles[report.status](fn) + '    ' + bar(report.tests)
+  ( style('node-' + (report.version)).bold
+  , styles[report.status](fn) + '    ' + bar(report.tests)
   , errors(report.errors)
   , tests(report.tests)
   )
