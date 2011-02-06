@@ -62,7 +62,7 @@ var Nihop = require('nih-op')
   .describe('stop remapping modules.')
 
   .option('logger','l',1)
-  .describe('how to display output .','[pretty|json]')
+  .describe('how to display output .','[pretty|object|json]')
   .default('pretty')
 
   .option('version','v',1).do(function (value){
@@ -116,8 +116,6 @@ exports.parse = function (args,currentDir){
   var obj = parser.parse(args)
 
   all.timeout = obj.timeout
-//  all.version = obj.version
-//  all.command = obj.version ? require('./platform').command(obj.version) : 'node'
 
   var r = tests
   tests = []

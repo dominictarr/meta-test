@@ -30,16 +30,7 @@ var sox=
     return default(args) //fall through    
   }
 
-
-
-what hooks will i use?
-
-loadTests
-loadAdapter
-run
 */
-
-//var log = require('logger')
 
 module.exports = Plugins
 

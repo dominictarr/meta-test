@@ -18,7 +18,6 @@ test-adapters: 'file'
 
 var easy = require('easyfs')
   , fs = require('fs')
-  , log = require('logger')
   , inspect = require('sys').inspect
 
 exports.select = select 
@@ -98,11 +97,9 @@ function parse (file){
       var e
       if(e = isRegExp(r)){
         var reg = new RegExp(e[1],e[2])
-        console.log(reg, typeof reg, reg instanceof RegExp)
         return new RegExp(e[1],e[2])
 
       } else if(e = isFunction(r)){
-        console.log(e.toString(), typeof e)
         return e
       }
       return r

@@ -19,7 +19,6 @@ var Report = require('./report')
   , Plugins = require('./plugins')
 //  , Remapper = new require('remap/remapper')
   , fs = require('fs')
-  , log = require('logger')
   , untangle = require('trees/untangle2')
   // parent-side
   // start child and when it exits check for the temp file, and scrape stderr
