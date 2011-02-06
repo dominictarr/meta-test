@@ -42,9 +42,7 @@ function runSync(tests){
 
 //dump an error message and exit, without being intercepted by process.on('uncaughtException',...)
 function crash(error){
-  console.log("CRASH!>>")
-  console.log(error)
-  console.log("<<CRASH!")
+  console.log("CRASH! '" + ( error ? (error.type ? error.type : error) : error )  + "'")
 //  console.error("CRASH!")
   console.error(error)
   process.exit(1)

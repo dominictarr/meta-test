@@ -16,11 +16,11 @@ parent-side
 */
 
 var Report = require('./report')
+  , Plugins = require('./plugins')
 //  , Remapper = new require('remap/remapper')
   , fs = require('fs')
   , log = require('logger')
   , untangle = require('trees/untangle2')
-
   // parent-side
   // start child and when it exits check for the temp file, and scrape stderr
 
@@ -34,14 +34,13 @@ exports.run = run
 function run(opts,cb){
 
   opts.tempfile = '/tmp/test_' + Math.round(Math.random()*10000)
-  var child = spawn((opts.command || 'node'), [ __dirname + '/child_runner.js', JSON.stringify(opts) ])
+
+  var child = spawn((opts.command || process.execPath), [ __dirname + '/child_runner.js', JSON.stringify(opts) ])
     , stderr = ''
     , errors = []
 
-  child.stdout.on('data',function(e){process.stdout.write(e)})
-  child.stderr.on('data',function(e){stderr += '' + e
-    process.stdout.write(e)
-  })
+  child.stdout.on('data',function(e){ process.stdout.write(e) })
+  child.stderr.on('data',function(e){ stderr += '' + e/*; process.stdout.write(e)*/ })
 
   var timeToRun = opts.timeout || 30e3 //default to 30 seconds timeout
     , timer = 
@@ -52,7 +51,6 @@ function run(opts,cb){
 
   child.on('exit',function (exStatus){
   
-//  setTimeout(function (){
       if(exStatus){
         errors.push(stderr)
         errors.push(exStatus)
@@ -80,6 +78,5 @@ function run(opts,cb){
         }
       }
 
-//      },200)
   })
 }

@@ -5,7 +5,7 @@ var it, is = it = require('it-is')
   , assert = require('assert')
   , helper = require('../helper')
   , test = module.exports
-  , log = require('logger')
+  , log = console.log
 
 test ['a Report'] = function (){
 

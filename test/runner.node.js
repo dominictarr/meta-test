@@ -1,7 +1,7 @@
 //runner.asynct.js
 var runner = require('../runner')
   , it, is = it = require('it-is')
-  , log = require('logger')
+  , log = console.log
   , helper = require('../helper')
   , platform = require('../platform')
 
@@ -98,9 +98,7 @@ exports ['stop child after timeout'] = function (finish){
 
 exports ['run multiple node versions'] = function (finish){
 
-
-
-  var target = (process.version == 'v0.3.2') ? 'v0.3.1' : 'v0.3.2'
+  var target = (process.version == 'v0.3.2') ? 'v0.3.1' : 'v0.3.2' //test a different version
 
   var testFile = 'meta-test/examples/test/pass.node.js'
 
@@ -117,7 +115,26 @@ exports ['run multiple node versions'] = function (finish){
       })
     finish()
   }
-
 }
+
+exports ['defaults to current version'] = function (finish){
+
+  var testFile = 'meta-test/examples/test/pass.node.js'
+
+  runner.run({filename:testFile},helper.try(cb,1000))
+  
+  function cb(err,report){
+    it(report)
+      .has({
+        filename: testFile
+      , tests: is.deepEqual([])
+      , errors: is.deepEqual([])
+      , status: 'success'
+      , version: process.version
+      })
+    finish()
+  }
+}
+
 
 helper.runAsync(exports)

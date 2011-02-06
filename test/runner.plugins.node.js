@@ -32,3 +32,83 @@ maybe ignore test directory for NpmMapper
 this could all be done tomorrow!
 
 */ 
+
+//dummy plugin just logs that it's me called in the report's meta field.
+
+var runner = require('../runner')
+  , it = require('it-is')
+  , log = console.log
+  , helper = require('../helper')
+  , path = require('path')
+
+exports ['load a logger plugin that records the hooks'] = function (finish){
+
+  runner.run({
+    filename:'./examples/test/pass.node'
+  , adapter: 'node'
+  , plugins: [{require: './plugins/logger' }]
+  }, helper.try(check,1000) )
+  
+  function check(err,report){
+  
+    it(report)
+      .has({
+        meta: {
+          loadTest: it.ok()
+        , loadAdapter: it.ok()
+        }
+      })
+    finish()
+  }
+}
+
+exports ['load remapper plugin that detects dependencies'] = function (finish){
+  console.log(process.version)
+  runner.run({
+    filename: path.join(__dirname,'../examples/test/pass.node')
+  , adapter: 'node'
+  , plugins: [{require: './plugins/remapper' }]
+  }, helper.try(check,1000) )
+  
+  function check(err,report){
+  
+//    it(report.status).equal('success')
+  
+    it(report)
+      .has({
+        version: process.version
+      , meta: {
+          remapper: {depends: it.ok()}
+        }
+      })
+    finish()
+  }
+}
+//*/
+exports ['load a npm-remapper plugin that detects npm-package dependencies'] = function (finish){
+  console.log(process.version)
+  runner.run({
+    filename: path.join(__dirname,'../examples/test/pass.node')
+  , adapter: 'node'
+  , plugins: [{require: './plugins/npm-remapper' }]
+  }, helper.try(check,1000) )
+  
+  function check(err,report){
+  
+//    it(report.status).equal('success')
+  
+    it(report.errors).deepEqual([])
+  
+    it(report)
+      .has({
+          meta: {
+          'npm-remapper': {depends: it.ok()}
+        }
+      })
+      
+    finish()
+  }
+}
+
+
+helper.runAsync(exports)

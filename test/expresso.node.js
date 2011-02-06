@@ -15,7 +15,7 @@
 var adapter = require('../adapters/expresso')
   , helper = require('../helper')
   , Report = require('../report')
-  , log = require('logger')
+  , log = console.log
   , assert = require('assert')
   , it = require('it-is')  
 

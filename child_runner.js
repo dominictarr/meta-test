@@ -8,6 +8,8 @@ var Report = require('./report')
   , fs = require('fs')
   , log = console.log
   , untangle = require('trees/untangle2')
+  , Plugins = require('./plugins')
+  
   
   var payload = JSON.parse(process.argv[2])
     , errors = []
@@ -18,17 +20,29 @@ var Report = require('./report')
     , r = {require: require, depends: {}} //disabled so it will run in 0.2.x
     , failed
     , tests
+    , hooks = new Plugins({
+      loadTest: require
+    , loadAdapter: require 
+    , exit: function (){}
+    }).load(payload.plugins)
+
+  console.log( "$$$$$$$$$$$", process.version , "$$$$$$$$$$$")
+  console.log( "--->", payload.version)
+console.log(payload)
+
+    
+    console.log(payload.plugins)
+    console.log(hooks)
 
   try{
-    tests = r.require(payload.filename)
+    tests = hooks.loadTest(payload.filename,reporter)
   } catch(error){
     failed = true
     reporter.error(error)  
   }
   if(!failed && payload.adapter) {
-    r.require.paths.unshift(__dirname + '/adapters')
 
-    var adapter = r.require(__dirname + '/adapters/' +payload.adapter)
+    var adapter = hooks.loadAdapter(__dirname + '/adapters/' +payload.adapter,reporter)
 
     shutdown = adapter.run(tests,reporter)
   }
@@ -36,8 +50,10 @@ var Report = require('./report')
   process.on('exit',function(){
   
     if(shutdown) shutdown()
+
+    hooks.exit(reporter)
     
-    reporter.report.depends = r.depends
+    reporter.report.depends = {} //r.depends
 
     fs.writeFileSync(payload.tempfile,untangle.stringify(reporter.report))
   })

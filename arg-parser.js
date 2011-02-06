@@ -19,6 +19,7 @@ var Nihop = require('nih-op')
   , remapFrom
   , version
   , command
+  , plugins = []
 
   parser
   .option('search','s',0).do(function (){
@@ -41,6 +42,19 @@ var Nihop = require('nih-op')
       remaps[remapFrom] = value
     })
   .describe('...to this','[to]')
+
+  .option('plugin','p',2).do(function (value){
+
+
+      try{
+      var args = JSON.parse(value[1])
+      } catch(err){
+        err.message = "could not 2nd argument to --plugin : '" +  value[1] + "' is not valid JSON"
+        throw err
+      }
+      plugins.push({require: value[0], args: args})
+    })
+  .describe('plugin to use (arguments is array in JSON format)','[plugin require] [arguments]')
 
   .option('unmap','u',0).do(function (value){
       remaps = undefined
@@ -85,6 +99,8 @@ function addTest (test){
     payload = selector.find(test,pwd)
   if(remaps)
     payload.remap = remaps
+  if(plugins.length)
+    payload.plugins = plugins
   
   payload.version = version || process.version
 

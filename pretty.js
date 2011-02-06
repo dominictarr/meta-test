@@ -2,6 +2,7 @@
 
 var style = require('style')
   , styleError = require('style/error').styleError
+  , render = require('render')
   
 var styles = 
     { 'success' : function (x){return style(x).green}
@@ -13,7 +14,7 @@ var syms =
     , 'failure' : '?'
     , 'error' : '!'
     }
-  
+
 function para (){
   var s = []
   for(var i in arguments){
@@ -53,6 +54,7 @@ function toString(report){
   return para
   ( style('node-' + (report.version)).bold
   , styles[report.status](fn) + '    ' + bar(report.tests)
+  , Object.keys(report.meta).length ? "MetaData:\n" + render(report.meta, {multi: true}) : null
   , errors(report.errors)
   , tests(report.tests)
   )

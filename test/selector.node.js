@@ -3,6 +3,7 @@ var it = require('it-is')
   , helper = require('../helper')
   , selector = require('../selector')
   , path = require('path')
+  , log = console.log
 
 exports ['simple selector'] = function (){
 
@@ -26,7 +27,6 @@ exports ['simple selector'] = function (){
   })
 }
 
-var log = require('logger')
 
 exports ['findAll'] = function (){
   var examples = 

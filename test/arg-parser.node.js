@@ -96,5 +96,20 @@ exports ['report & timeout'] = function (){
 
 }
 
+exports ['plugins'] = function (){
+  it(parser.parse("-plugin require [\"arguments\"] test/arg-parse.node.js".split(' '),dir))
+    .has({
+      tests: [
+        { plugins: [{require: 'require', args: ["arguments"]}]
+//        , filename: "test/arg-parse.node.js"
+        }
+      
+      ]
+    })
+
+  //logger should default to 'pretty'
+}
+
+
 
 helper.runSync(exports)
