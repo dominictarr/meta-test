@@ -1,17 +1,16 @@
 
 #Meta-Test (alpha)#
 
-aims:
-  meta-test aims to be a reliable and flexible test framework that extracts very good information about the behaviour of code
-  it's currently optomised for robustness. 
-  the worst kind of bug in a test framework is one that creates false results (false negative or false positive).
-  the next worse is one that obscures true results.
+  Meta-test doesn't just run tests, it runs <i>experiments</i>. tests can be run in different node versions,
+  and with different dependency versions. detecting compatibility with the coding eco-system.
+  
+  meta-test is currently alpha status. please contact me for any questions!
 
 current features:
 
   * run expresso, and nodeunit tests (adapters use a very simple API easy to add more)
   * run plain node.js scripts which just throw an exception on failure.
-  * isolate tests in a seperate node process.
+  * isolate tests in a separate node process.
   * detect compatibility with node versions by testing in each version (>=0.2.0)
   * test runner plugin to detect npm dependencies & test with different dependency versions (with node >= 0.3.0)
   * a standard reporting API independent of test framework.
@@ -26,8 +25,8 @@ forthcoming:
   * full test reports for every npm package across node & dependency versions
 
 ##Support##
-this is the alpha release of an ambitious project. Any problems, please do not hesitate to log a issue, email me (dominic.tarr@gmail.com) or find me in #node.js on irc.freenode.net
 
+this is the alpha release of an ambitious project. Any problems, please do not hesitate to log a issue, email me (dominic.tarr@gmail.com) or find me in #node.js on irc.freenode.net
 
 ##Usuage##
 
@@ -99,7 +98,7 @@ to use npm to run tests programmaticially:
 ##Adapter API##
 
 a test adapter needs just one function, `run(tests,reporter)` it's two arguments are the exports module of the unit test, 
-and the report builder. it must also return a shutdown function, which will be called when the test runner is confidant that the test is complete (i.e. at exit). the shutdown function must be syncronous.
+and the report builder. it must also return a shutdown function, which will be called when the test runner is confidant that the test is complete (i.e. at exit). the shutdown function must be synchronous.
 
 example of a very simple testing api for sync tests:
 
