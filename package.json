@@ -5,6 +5,7 @@
   "homepage": "http://github.com/dominictarr/meta-test",
   "repository": "git://github.com/dominictarr/meta-test2.git",
   "author": "Dominic Tarr <dominic.tarr@gmail.com>",
+  "main" : "./runner.js",
   "directories": {
     "lib": ""
   },

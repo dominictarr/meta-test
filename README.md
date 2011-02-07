@@ -1,6 +1,12 @@
 
 #Meta-Test (alpha)#
 
+aims:
+  meta-test aims to be a reliable and flexible test framework that extracts very good information about the behaviour of code
+  it's currently optomised for robustness. 
+  the worst kind of bug in a test framework is one that creates false results (false negative or false positive).
+  the next worse is one that obscures true results.
+
 current features:
 
   * run expresso, and nodeunit tests (adapters use a very simple API easy to add more)
@@ -19,15 +25,19 @@ forthcoming:
   * cloud service to run tests, 
   * full test reports for every npm package across node & dependency versions
 
+##Support##
+this is the alpha release of an ambitious project. Any problems, please do not hesitate to log a issue, email me (dominic.tarr@gmail.com) or find me in #node.js on irc.freenode.net
+
+
 ##Usuage##
 
 basic
 
-    > meta-test -expresso test/an-expresso-test.js //run an expresso test etc.
-    > meta-test -nodeunit test/an-expresso-test.js //run an nodeunit test etc.
-    > meta-test -node test/script.js //a script which throws an exception & exits on fail or error.
+    > meta-test -expresso test/an-expresso-test.js   //run an expresso test etc.
+    > meta-test -nodeunit test/an-expresso-test.js   //run an nodeunit test etc.
+    > meta-test -node test/script.js                 //a script which throws an exception & exits on fail or error.
 
-set node version
+set node version of test process. will detect node versions installed by nvm.
 
     > meta-test -version v0.3.8 test/test.expresso.js
     
@@ -39,14 +49,17 @@ remap dependencies
 
     > meta-test -plugin ./plugin/npm-remapper [{\"package\":\"x.y.z\"}] test/test.expresso.js
 
-    //plugin option takes to args. path to the plugin, then arguments to to plugin in json.
-    //to remap versions: [[{packagename: version}] (as many remaps as you like, must be vaild JSON.
+`-plugin` option takes two arguments. path to the plugin, then arguments to to plugin in json.
+to remap versions: `[[{packagename: version}]` (as many remaps as you like, must be vaild JSON)
     
+    
+for more information use `meta-test --help`
+
 ##detecting test adapters.##
 
-###the easy way: <strong> use my convention </strong> ###
+###the easy way: <i> use my convention </i> ###
 
-append .[adapter].js to your test filenames.
+append `.[adapter].js` to your test filenames.
 
     test/test1.expresso.js   //an expresso test
     test/test2.nodeunit.js   //an nodeunit test
@@ -55,38 +68,56 @@ append .[adapter].js to your test filenames.
     
 ###the less easy way:###
 
-meta-test will recursively search ./ , ../ ,  ../../ , etc looking for a package.json.
-if the json it finds has an property test-adapters: ['adapter'] //note adapter must be in an array.
+meta-test will recursively search `./` , `../` ,  `../../` , etc looking for a `package.json`.
+if the json it finds has an property `"test-adapters": ['adapter']` (note adapter must be in an array)
 
 
+##Test Runner API##
 
+to use npm to run tests programmaticially:
 
-meta-test is a framework for writing compatible unit test frameworks.
+    var meta = require('meta-test')
+    
+    meta.run({
+    //mandatory
+      filename: pathToTest //will need to be relative to meta-test/runner or absolute
+    , adapter: nameOfAdapter // something from meta-test/adapters directory
+    //optional
+    , timeout: maxTimeInMilliseconds //defaults to 30e3 (30 seconds)
+    , plugins: [{
+        { require: toToPlugin //i.e. './plugins/npm-remapper'
+        , args: [{package: version}] //remap version of package (optional)
+        } 
+      }]
+    }, callback)
+    
+    function callback (err,report){
+      //do something with the report!
+    }
 
-it handles running, reporting, and structure of the report, and interface between meta-test and an actual test is provided
-by an adapter
 
 ##Adapter API##
 
 a test adapter needs just one function, `run(tests,reporter)` it's two arguments are the exports module of the unit test, 
 and the report builder. it must also return a shutdown function, which will be called when the test runner is confidant that the test is complete (i.e. at exit). the shutdown function must be syncronous.
 
-that is all.
+example of a very simple testing api for sync tests:
 
-##Adapter Detection##
-
-meta-test needs to know what test adapter to use, meta-test will search recurively through parent directories
-looking for package.json or tests.json
-
-"test-adapter":"expresso" //if all your tests use a one adapter
-
-//regular expression to full adapter from first group in match
-"test-adapter": '/^.+\.(\w+)\.\w+$/' 
-//this expression would match 
-//filename.adapter.js and return adapter
-//this is the default
-
-//explicitly match filenames to adapters.
-"test-adapter": {filename: adapter}
-
-ARGH write stuff here.
+    exports.run = function (tests,reporter){
+    
+      for(var name in tests){
+        reporter.test(name) //log that the test has begun
+        try{
+          tests[name]()//run each test      
+        } catch (error){
+          reporter.test(name,error) //log the error     
+        }
+        //an async error will crash the process, but meta-test will catch it by scraping stderr!
+      }
+    
+      return function (){
+        //check that all tests are finished without errors
+        //this function will be called just before the test process exits.
+      }
+    
+    }
