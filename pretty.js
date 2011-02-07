@@ -54,7 +54,7 @@ function toString(report){
   return para
   ( style('node-' + (report.version)).bold
   , styles[report.status](fn) + '    ' + bar(report.tests)
-  , Object.keys(report.meta).length ? "MetaData:\n" + render(report.meta, {multi: true}) : null
+  , (report.meta && Object.keys(report.meta).length) ? "MetaData:\n" + render(report.meta, {multi: true}) : null
   , errors(report.errors)
   , tests(report.tests)
   )

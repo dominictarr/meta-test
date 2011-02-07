@@ -7,7 +7,10 @@ exports.run = run
 , 'errored': 'error' }*/
 
 function run (vows,reporter){
-  vows = vows.Vows
+  console.log("***")
+  console.log(vows)
+//  vows = vows.Vows || vows
+
 
   vows.reporter = {
     name: 'vows-adapter'
