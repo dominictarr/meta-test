@@ -24,6 +24,9 @@
   "devDependencies": {
     "it-is": "*"
   },
+  "scripts":{
+    "test":". ./all_tests.sh"
+  },
   "engines": {
     "node": ">=0.2.0"
   }

@@ -4,9 +4,10 @@ var runner = require('../runner')
   , log = console.log
   , helper = require('../helper')
   , platform = require('../platform')
+  , path = require('path')
 
 exports ['run a file and make a report'] = function (finish){
-  var testFile = 'meta-test/examples/test/pass.node.js'
+  var testFile = path.join(__dirname, '..','examples/test/pass.node.js')
 
   runner.run({filename:testFile },helper.try(cb,1000))
   
@@ -25,6 +26,7 @@ exports ['run a file and make a report'] = function (finish){
 //*/
 
 function hasError(testFile,check,done){
+  testFile = path.join(__dirname, '..',testFile)
   runner.run({filename:testFile },helper.try(cb,1000))
   
   function cb(err,report){
@@ -40,19 +42,19 @@ function hasError(testFile,check,done){
 }
 
 exports ['run a file that errors weird'] = function (finish) {
-  hasError('meta-test/examples/test/null.node.js',[is.equal(null)],finish)
+  hasError('examples/test/null.node.js',[is.equal(null)],finish)
 }
 
 exports ['run a file that errors'] = function (finish) {
-  hasError('meta-test/examples/test/error.node.js',[is.ok()],finish)
+  hasError('examples/test/error.node.js',[is.ok()],finish)
 }
 
 exports ['run a file that errors async'] = function (finish) {
-  hasError('meta-test/examples/test/async_error.node.js',[is.ok()],finish)
+  hasError('examples/test/async_error.node.js',[is.ok()],finish)
 }
 
 exports ['run a file with syntax error'] = function (finish) {
-  hasError('meta-test/examples/test/syntax_error.node.js',[is.ok()],finish)
+  hasError('examples/test/syntax_error.node.js',[is.ok()],finish)
 }
 
 exports ['run dummy-adapter'] = function (finish){
@@ -100,7 +102,7 @@ exports ['run multiple node versions'] = function (finish){
 
   var target = (process.version == 'v0.3.2') ? 'v0.3.1' : 'v0.3.2' //test a different version
 
-  var testFile = 'meta-test/examples/test/pass.node.js'
+  var testFile = './examples/test/pass.node.js'
 
   runner.run({filename:testFile, command: platform.command(target)},helper.try(cb,1000))
   
@@ -119,7 +121,7 @@ exports ['run multiple node versions'] = function (finish){
 
 exports ['defaults to current version'] = function (finish){
 
-  var testFile = 'meta-test/examples/test/pass.node.js'
+  var testFile = './examples/test/pass.node.js'
 
   runner.run({filename:testFile},helper.try(cb,1000))
   

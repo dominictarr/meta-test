@@ -7,7 +7,7 @@ NEXT: add plugins.
 var Report = require('./report')
   , fs = require('fs')
   , log = console.log
-  , untangle = require('trees/untangle')
+  , untangle = require('trees').untangle
   , Plugins = require('./plugins')
   
   

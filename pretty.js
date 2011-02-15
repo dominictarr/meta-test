@@ -1,19 +1,28 @@
 //prettyprint test report
 
 var style = require('style')
-  , styleError = require('style/error').styleError
+//  , styleError = require('color').error.styleError
   , render = require('render')
   
 var styles = 
-    { 'success' : function (x){return style(x).green}
-    , 'failure' : function (x){return style(x).yellow}
-    , 'error' : function (x){return style(x).red}
+    { 'success' : style('green')
+    , 'failure' : style('yellow')
+    , 'error' : style('red')
     }
 var syms = 
     { 'success' : '.'
     , 'failure' : '?'
     , 'error' : '!'
     }
+
+function styleError (error){
+
+  if(!error)
+    return '' + error
+  if(error.stack)
+    return error.stack
+  return '' + error
+}
 
 function para (){
   var s = []
@@ -30,8 +39,10 @@ function indent (lines){
 }
 function errors(errors){
   if(errors.length)
+//    return errors.join('\n')
     return errors.map(styleError).join('\n')
 }
+
 
 function bar (list){
   return list.map(function (e){ return styles[e.status](syms[e.status]) }).join('')

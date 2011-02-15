@@ -1,7 +1,6 @@
 
 
 var nodeunit = require('nodeunit/core')
-  , log = require('logger')
 
 exports.run = run
 
