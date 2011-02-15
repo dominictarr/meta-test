@@ -13,7 +13,7 @@
     "meta-test" : "./go.js"
   },
   "dependencies": {
-    "style": "*"
+    "style": "0.1.x"
   , "easyfs": "*"
   , "nih-op": "*"
   , "npm-remapper": "*"
