@@ -54,7 +54,7 @@ remaps
 */
 
 exports ['remaps'] = function (){
-
+/*
   parse('--remap a.js --to b.js test/arg-parse.node.js',dir)
   ( [ {filename:'test/arg-parse.node.js', adapter: 'node', remap: {"a.js": "b.js" } ,command: 'node'}
     ] )
@@ -64,6 +64,11 @@ exports ['remaps'] = function (){
     , {filename:'examples/test/simple.vows.js', adapter: 'vows', command: 'node', remap: {"a.js": "b.js" } }
     , {filename:'examples/test/simple.nodeunit.js', adapter: 'nodeunit', command: 'node', }
     ] )
+    */
+  parse('--remaps {"./a":"./b"} test/arg-parse.node.js',dir)
+    ( [ {filename:'test/arg-parse.node.js', adapter: 'node', remaps: {"./a": "./b" } ,command: 'node'}
+    ] )
+
 }
 
 exports ['report & timeout'] = function (){

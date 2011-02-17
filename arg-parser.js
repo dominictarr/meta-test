@@ -30,21 +30,26 @@ var Nihop = require('nih-op')
   .option('depends','d',0)
   .describe('display dependencies of tests')
 
-  .option('remap','r',1).do(function (value){
-      remapFrom = value
+  .option('remaps','r',1).do(function (value){
+      remaps = value
     })
-  .describe('remap a module/package from this...', '[from]')
-
-  .option('to','t',1).do(function (value){
+  .describe('remap modules {from: to,...}', '[json]').do(function (value){
+      try{
+      remaps = JSON.parse(value)
+      } catch (error){
+        error.message += "could not parse '" + value + "'"
+        throw error
+      }
+    })
+/*  .option('to','t',1).do(function (value){
       remaps = remaps || {}
       if(!remapFrom)
         throw "got --to " + value + " but did not have a -remap X"
       remaps[remapFrom] = value
     })
-  .describe('...to this','[to]')
+  .describe('...to this','[to]')*/
 
   .option('plugin','p',2).do(function (value){
-
 
       try{
       var args = JSON.parse(value[1])
@@ -98,7 +103,7 @@ function addTest (test){
   else 
     payload = selector.find(test,pwd)
   if(remaps)
-    payload.remap = remaps
+    payload.remaps = remaps //JSON.parse(remaps)
   if(plugins.length)
     payload.plugins = plugins
   

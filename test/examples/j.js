@@ -1,0 +1,3 @@
+//j.js
+
+require('./k')

@@ -5,6 +5,12 @@ var adapter = require('../adapters/nodeunit')
   , assert = require('assert')
   , it = require('it-is')  
 
+/*
+make async failing test.
+
+asynct is failing for async tests in 0.2.0, why?
+*/
+
 exports ['pass'] = function (finish){
   var reporter = new Report('passing test')
     , expects = new Report('passing test')

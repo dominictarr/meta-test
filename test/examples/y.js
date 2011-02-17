@@ -1,0 +1,2 @@
+  //y.js
+    require('./z')

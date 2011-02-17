@@ -6,6 +6,26 @@
   
   meta-test is currently alpha status. please contact me for any questions!
 
+/*
+add options for rewritten remaps.
+
+release,
+
+then start thinking about aggregation.
+
+rows and collumns 
+  (node versions, a list of different remaps)
+or
+  (two remap lists which are combined) -- for checking compatibility of different node versions.
+  
+will probably want a nice way to specify a package@version
+
+! when request('package') it's easy
+! when testing own package might say require('../lib/..') etc
+! but that only applies to testing your own package... so it's convieniently limited case
+*/
+
+
 current features:
 
   * run expresso, and nodeunit tests (adapters use a very simple API easy to add more)
