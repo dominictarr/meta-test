@@ -2,7 +2,7 @@
 var it = require('it-is')
   , synct = require('../adapters/synct')
   , Report = require('../report')
-  , helper = require('../helper')
+  , helper = require('./lib/helper')
   , isPass = helper.isPass
   , isError = helper.isError
   , isFail = helper.isFail

@@ -1,5 +1,5 @@
 
-var helper = require('../helper')
+var helper = require('./lib/helper')
   , runner = require('../runner')
   , it = require('it-is')
 

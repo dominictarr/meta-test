@@ -1,7 +1,7 @@
 //platform.node.js
 
 var it = require('it-is')
-  , helper = require('../helper')
+  , helper = require('./lib/helper')
   , platform = require('../platform')
   , fs = require('fs')
 exports ['check nvm is installed'] = function (){

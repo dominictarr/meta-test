@@ -9,7 +9,7 @@ var Report = require('./report')
   , log = console.log
   , untangle = require('trees').untangle
 //  , Plugins = require('./plugins')
-  , depends = require('depends')
+  , depends = require('./depends')
   , loader = require('./loader')
 
   

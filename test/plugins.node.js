@@ -1,4 +1,4 @@
-var helper = require('../helper')
+var helper = require('./lib/helper')
   , it = require('it-is')
   , Plugins = require('../plugins')
 

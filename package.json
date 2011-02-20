@@ -16,13 +16,12 @@
     "style": "0.1.x"
   , "easyfs": "*"
   , "nih-op": "*"
-  , "npm-remapper": "*"
-  , "remap": ">=0.0.2"
   , "trees": "*"
   , "nodeunit": ">=0.5.0"
   },
   "devDependencies": {
     "it-is": "*"
+  , "nodeunit": ">=0.5.0"
   },
   "scripts":{
     "test":". ./all_tests.sh"

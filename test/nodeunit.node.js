@@ -1,5 +1,5 @@
 var adapter = require('../adapters/nodeunit')
-  , helper = require('../helper')
+  , helper = require('./lib/helper')
   , Report = require('../report')
   , log = console.log
   , assert = require('assert')

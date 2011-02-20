@@ -2,7 +2,7 @@
 var runner = require('../runner')
   , it, is = it = require('it-is')
   , log = console.log
-  , helper = require('../helper')
+  , helper = require('./lib/helper')
   , platform = require('../platform')
   , path = require('path')
 

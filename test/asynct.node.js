@@ -2,7 +2,7 @@
 
 //simple async test adapter
 
-var helper = require('../helper')
+var helper = require('./lib/helper')
   , it = require('it-is')
   , isPass = helper.isPass
   , isError = helper.isError

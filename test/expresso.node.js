@@ -13,7 +13,7 @@
 
 
 var adapter = require('../adapters/expresso')
-  , helper = require('../helper')
+  , helper = require('./lib/helper')
   , Report = require('../report')
   , log = console.log
   , assert = require('assert')

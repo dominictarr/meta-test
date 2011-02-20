@@ -3,7 +3,7 @@
 var it, is = it = require('it-is')
   , Report = require('../report')
   , assert = require('assert')
-  , helper = require('../helper')
+  , helper = require('./lib/helper')
   , test = module.exports
   , log = console.log
 

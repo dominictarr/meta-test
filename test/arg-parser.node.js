@@ -1,6 +1,6 @@
 //arg-parser.node.js
 
-var helper = require('../helper')
+var helper = require('./lib/helper')
   , it = require('it-is')
   , parser = require('../arg-parser')
   , path = require('path')

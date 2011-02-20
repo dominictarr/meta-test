@@ -1,6 +1,6 @@
 
 var it = require('it-is')
-  , helper = require('../helper')
+  , helper = require('./lib/helper')
   , selector = require('../selector')
   , path = require('path')
   , log = console.log
