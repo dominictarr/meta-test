@@ -3,6 +3,7 @@ simplest test runner.
 
 child-side
   { adapter:  require test adapter (if it is defined)
+  , version: v0.4.1
   , test:  require module
   , tempfile: write on exit }
   on exit
@@ -17,13 +18,8 @@ parent-side
 
 var Report = require('./report')
   , Plugins = require('./plugins')
-//  , Remapper = new require('remap/remapper')
   , fs = require('fs')
-  , untangle = require('trees/untangle')
-  // parent-side
-  // start child and when it exits check for the temp file, and scrape stderr
-
-  //(loads ./child_runner.js on the child side.)
+  , untangle = require('trees').untangle
 
 var spawn = require('child_process').spawn
   , util = require('sys')

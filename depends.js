@@ -66,6 +66,10 @@ require('e')
 dependency report. (copy depends and filename, source hash etc from module)
 
 */
+if(module.constructor.prototype._depends)
+  return module.constructor.prototype._depends
+else module.constructor.prototype._depends = exports
+
 var allSorted = exports.allSorted = []
 var levels = {}
 var cache = module.constructor.prototype.__filenameCache = {}
@@ -73,7 +77,6 @@ var cache = module.constructor.prototype.__filenameCache = {}
 var __compile = 
   module.constructor.prototype._compile
   module.constructor.prototype._remaps = {}
-
   module.constructor.prototype._preRequire = function (old){
     if('object' == typeof this._remaps[old])
       this._newRemaps = this._remaps[old]
