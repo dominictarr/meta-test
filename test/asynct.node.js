@@ -187,6 +187,33 @@ exports ['double error'] = function (finish){
   }
 }
 
+exports ['error if tests not executed'] = function (finish){
+  var reporter = new Report('error if tests not executed')
+    , finished = false
+    , shutdown = 
+  asynct.run({
+    'pass': helper.try(function (test){
+    },200)
+  , 'not called 1': function (test){
+    }
+  , 'not called 2': function (test){
+    }
+  },reporter) 
+
+  setTimeout(helper.try(done),300)
+
+  function done(){
+    shutdown()
+
+    check
+    ( reporter.report, 'error if tests not executed','error',
+      [ isPass('pass'), isError('not called 1'), isError('not called 2') ] )
+
+    finish()  
+  }
+}
+
+
 /*
 exports ['finish then error'] = function (finish){
   var reporter = new Report('finish then error')

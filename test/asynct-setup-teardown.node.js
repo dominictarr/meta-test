@@ -115,13 +115,16 @@ exports['setup fail error teardown'] = function (finish){
   setTimeout(done,200)
 
   function done(){
+    //should call teardown when all tests are finished...
+    if(!teardowns)
+      helper.crash("expected teardown to have been called already")
+    
     shutdown()
     check
     ( reporter.report, 'pass','error',
       [ isFail('fail'), isError('error') ] )
 
     it(setups).equal(1)
-    it(teardowns).equal(1)
 
     finish()  
   }

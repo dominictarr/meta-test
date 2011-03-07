@@ -7,7 +7,7 @@ NEXT: add plugins.
 var Report = require('./report')
   , fs = require('fs')
   , log = console.log
-//  , untangle = require('trees').untangle
+  , untangle = require('trees').untangle
 //  , Plugins = require('./plugins')
   , depends = require('./depends')
   , loader = require('./loader')
@@ -68,5 +68,5 @@ if(payload.remaps)
     }))
 
 //    fs.writeFileSync(payload.tempfile,untangle.stringify(reporter.report))
-    fs.writeFileSync(payload.tempfile,JSON.stringify(reporter.report))
+    fs.writeFileSync(payload.tempfile,untangle.stringify(reporter.report))
   })
