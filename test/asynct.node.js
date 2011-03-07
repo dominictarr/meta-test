@@ -78,16 +78,11 @@ exports ['error'] = function (finish){
     , shutdown = 
       asynct.run({
        'error1': helper.try(function (test){
-      //  try{
-          setTimeout(
-          //process.nextTick(
-          function (){
-          console.log("throw!")
+          setTimeout(function (){
+            console.log("throw!")
 
-          throw new Error ("ASYNC ERROR") },0)
-  //        }catch (error){
-//            throw "ERROR THREW SYNC!!!"
-    //      }
+            throw new Error ("ASYNC ERROR") 
+          },0)
         },500)
       },reporter)
 
@@ -109,8 +104,11 @@ exports ['failure'] = function (finish){
     , shutdown = 
 
   asynct.run({
-   'fail1': helper.try(function (test){
-      setTimeout(function (){ it(0).equal(1) },0)
+    'fail async': helper.checkCall(function (test){
+      setTimeout(function (){ it(0).equal('async') },0)
+    },500)
+  , 'fail sync': helper.checkCall(function (test){
+      it(0).equal('sync')
     },500)
   },reporter)
 
@@ -121,7 +119,7 @@ exports ['failure'] = function (finish){
     shutdown()
     check
     ( reporter.report, 'failure','failure',
-      [ isFail('fail1') ] )
+      [ isFail('fail async'), isFail('fail sync') ] )
 
     finish()  
   }

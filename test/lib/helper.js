@@ -10,6 +10,7 @@ exports.runAsync = runAsync
 
 exports.crash = crash
 exports.try = TRY
+exports.checkCall = checkCall
 
 
 function isPass(name){
@@ -48,7 +49,7 @@ function crash(error){
   process.exit(1)
 }
 
-function TRY (func,timeout){
+function checkCall (func,timeout){
   var timer
   if(timeout)
     timer = setTimeout(function (){
@@ -58,13 +59,23 @@ function TRY (func,timeout){
   return function (){
     if(timeout)
       clearTimeout(timer)
+    func.apply(null,arguments)
+  }
+}
+
+function TRY (func,timeout){
+  var call = checkCall(func,timeout)
+
+  return function (){
     try{
-      func.apply(null,arguments)
+      call.apply(null,arguments)
     }catch(error){
       crash(error ? (error.stack ? error.stack : error) : error)
     } 
   }
 }
+
+
 
 //setInterval(function (){console.log('.')},50)
 
