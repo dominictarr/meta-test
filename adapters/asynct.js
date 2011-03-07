@@ -14,6 +14,7 @@ function run(tests,reporter){
     , setupAll = null
     , teardownAll = null
     , teardownCalled = false
+    , status = {}
 
   names = names.filter(function (e){
     if(setupX(e))
@@ -22,6 +23,10 @@ function run(tests,reporter){
       teardownAll = tests[e]
     else
       return true
+  })
+
+  names.forEach(function (n){
+    status[n] = 'not started'
   })
 
   testNames = [].concat(names)
@@ -34,7 +39,10 @@ function run(tests,reporter){
   }
 
   function handler (error){
+
     if(currentName) {
+      status[currentName] = 'finished'
+
       reporter.test(currentName,error)
       process.nextTick(currentNext || next)
     } else {
@@ -60,6 +68,7 @@ function run(tests,reporter){
       },'__teardown'))              
     }
   }
+
   function next(){
     if(!names.length){
       callTeardown()
@@ -72,6 +81,7 @@ function run(tests,reporter){
       , tester = new Tester(safeNext,name)
     reporter.test(name)
     try { 
+      status[name] = 'started'
       tests[name](tester) 
     } catch (error){
       reporter.test(name,error)
@@ -80,6 +90,8 @@ function run(tests,reporter){
     function safeNext(){
       
       if(!finished) {
+        status[currentName] = 'finished'
+
         callTeardown()
         finished = true
         process.nextTick(next)
@@ -90,11 +102,12 @@ function run(tests,reporter){
   }
 
   return function (){ //return a shutdown function, will be called on exit
-        testNames.forEach(function (c){
-          console.log("TESTS WHICH WHERE NOT RUN!",names)
-          if(!reporter.tests[c])
-            reporter.test(c,"was not executed (did a test not call test.done()?)")
-        })
-      process.removeListener('uncaughtException', handler)
+    testNames.forEach(function (c){
+      if(status[c] == 'not started')
+        reporter.test(c,"was not started. (did anmother test not call test.done()?)")
+      else if (status[c] == 'started')
+        reporter.test(c,"was started, but did not complete. (did anmother test not call test.done()?)")
+    })
+    process.removeListener('uncaughtException', handler)
   }
 }

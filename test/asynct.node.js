@@ -193,6 +193,7 @@ exports ['error if tests not executed'] = function (finish){
     , shutdown = 
   asynct.run({
     'pass': helper.try(function (test){
+      test.done()
     },200)
   , 'not called 1': function (test){
     }
