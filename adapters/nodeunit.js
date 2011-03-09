@@ -1,6 +1,6 @@
 
 
-var nodeunit = require('nodeunit/core')
+var nodeunit = require('nodeunit/lib/core')
 
 exports.run = run
 
