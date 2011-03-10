@@ -93,8 +93,8 @@ to use npm to run tests programmaticially:
 a test adapter needs just one function, `run(tests,reporter)` 
 it has just two arguments:
 
-  * tests: whatever the unit test exported
-  * reporter: the meta-test report builder.
+  * `tests`: whatever the unit test exported
+  * `reporter`: the meta-test report builder.
 
 it must return a shutdown function.
 
