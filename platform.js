@@ -15,17 +15,20 @@ var fs = require('fs')
   
 if(!dir)
   return console.error("could not detect nvm (node version manager) installation.\n"
-    + "see https://github.com/creationix/nvm ")
-
-var list = fs.readdirSync(dir).filter(function (e){return /^v\d+\.\d+\.\d+\w*$/(e)}).sort()
+    + "see https://github.com/creationix/nvm or email dominic.tarr@gmail.com to complain.")
 
 var platforms = {}
-
-list.forEach(function (e){
-  platforms[e] = path.join(dir, e , 'bin/node')
-})
-// + '/bin/node
-
+var list = fs.readdirSync(dir)
+  .filter(function (e){
+    if(/^v\d+\.\d+\.\d+\w*$/(e)){
+      try {
+        var file = path.join(dir,e, 'bin/node')
+        fs.statSync(file)
+        platforms[e] = file
+        return true
+      } catch (err) {return false}
+    }
+  }).sort()
 
 function command (name){
   return platforms[name]

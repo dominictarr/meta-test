@@ -35,7 +35,7 @@ function run(opts,cb){
     , errors = []
 
   child.stdout.on('data',function(e){ process.stdout.write(e) })
-  child.stderr.on('data',function(e){ stderr += '' + e/*; process.stdout.write(e)*/ })
+  child.stderr.on('data',function(e){ stderr += '' + e; process.stderr.write(e) })
 
   var timeToRun = opts.timeout || 30e3 //default to 30 seconds timeout
     , timer = 
@@ -52,6 +52,7 @@ function run(opts,cb){
       }
       clearTimeout(timer)
       fs.readFile(opts.tempfile, 'utf-8', c)
+
       function c(err,json){
         if(!err)
           fs.unlink(opts.tempfile) //delete temp file.

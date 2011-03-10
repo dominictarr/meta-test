@@ -24,6 +24,7 @@ exports ['commands actually exist'] = function (){
     })
 
   it(platform.list)
+    .property('length',it.ok())//truthy
     .every(function (a){fs.statSync(platform.command(a))})
 }
 

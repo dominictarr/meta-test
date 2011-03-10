@@ -106,15 +106,11 @@ exports ['plugins'] = function (){
     .has({
       tests: [
         { plugins: [{require: 'require', args: ["arguments"]}]
-//        , filename: "test/arg-parse.node.js"
         }
       
       ]
     })
-
-  //logger should default to 'pretty'
 }
-
 
 
 helper.runSync(exports)

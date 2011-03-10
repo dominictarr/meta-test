@@ -2,7 +2,7 @@
 
 var fs = require('fs')
 
-var expresso = fs.readFileSync(__dirname+'/lib/expresso','utf-8')
+var expresso = fs.readFileSync(require.resolve('expresso/bin/expresso'),'utf-8')
 
 expresso = expresso.replace ("defer;", "defer = true;")
 expresso = expresso.replace ("#!", "//#!")

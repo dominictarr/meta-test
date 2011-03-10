@@ -17,10 +17,12 @@
   , "easyfs": "*"
   , "nih-op": "*"
   , "nodeunit": ">=0.5.0"
+  , "expresso": ">=0.6.0"
+  , "trees": "*"
+  , "nvm": ">=0.0.6"
   },
   "devDependencies": {
     "it-is": "*"
-  , "nodeunit": ">=0.5.0"
   },
   "scripts":{
     "test":". ./all_tests.sh"

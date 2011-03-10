@@ -1,10 +1,8 @@
 
 #Meta-Test (alpha)#
+##the test framework framework##
 
-  Meta-test doesn't just run tests, it runs <i>experiments</i>. tests can be run in different node versions,
-  and with different dependency versions. detecting compatibility with the coding eco-system.
-  
-  meta-test is currently alpha status. please contact me for any questions!
+Meta-test get everything that every test framework **must** do (reporting, sandboxing) and separates it from the things it  **may** do (the test api). hence it creates a standard runner for multiple test frameworks with only lightweight adapters to run any style of test.
 
 current features:
 

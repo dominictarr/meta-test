@@ -39,9 +39,11 @@ function finish(){
   console.log("Meta-Test ~ " + new Date + "\n")
 
   reports.map(function (e){
-    if(parsed.logger == 'pretty')
+    if(parsed.logger == 'pretty'){
       pretty.print(e)
-    else
+      if(parsed.meta)
+        console.log('MetaData:\n',inspect(e.meta, {multi: true}))
+    }else
       console.log(inspect(e, {multi: true}))
   })
   console.log(pretty.bar(reports))

@@ -27,8 +27,8 @@ var Nihop = require('nih-op')
     })
   .describe('search for test adapter from filename / package.json')
 
-  .option('depends','d',0)
-  .describe('display dependencies of tests')
+  .option('meta','m',0)
+  .describe('display extra test information (i.e. dependencies of tests)')
 
   .option('remaps','r',1).do(function (value){
       remaps = value
@@ -80,7 +80,7 @@ var Nihop = require('nih-op')
   .describe('node version to test against\n   one of: [' + require('./platform').list.join(',') + ']','[version]')
 
   .option('timeout','t',1)
-  .describe('force test to finish timeout. (default 30 seconds)','[millseconds]')
+  .describe('force test to finish within time. (default is 30 seconds)','[millseconds]')
 
   .arg(addTest)
   
