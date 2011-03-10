@@ -2,25 +2,28 @@
 #Meta-Test (alpha)#
 ##the test framework framework##
 
-Meta-test get everything that every test framework **must** do (reporting, sandboxing) and separates it from the things it  **may** do (the test api). hence it creates a standard runner for multiple test frameworks with only lightweight adapters to run any style of test.
+Meta-test does everything that every test framework **must** do (reporting, sandboxing) and separates it from the things it  **may** do (the test api). 
+
+Hence meta-test is a standard runner for multiple test frameworks. 
+
+only lightweight adapters are necessary to run any kind of nodejs test, currently expresso, vows, nodeunit, and node tests are supported.
+
+(by 'node' test i mean a simple script which throws an exception if it fails, but has no framework - the simplest kind of test)
 
 current features:
 
-  * run expresso, and nodeunit tests (adapters use a very simple API easy to add more)
+  * run expresso, vows, and nodeunit tests (adapters use a very simple API - easy to add more)
   * run plain node.js scripts which just throw an exception on failure.
   * isolate tests in a separate node process.
   * detect compatibility with node versions by testing in each version (>=0.2.0)
-  * test runner detects dependencies & can inject different dependency versions
+  * test runner detects dependencies & can inject different dependency versions (see -meta and -remaps args)
   * a standard reporting API independent of test framework.
 
 forthcoming:
 
-  * additional test framework adapters,  vows, test-commonjs, qunit, mjsunit etc.
+  * additional test framework adapters,  test-commonjs, qunit, mjsunit etc.
   * browser based testing.
-  * aggregate test results to reports on compatibility with platform (node,browser) versions, and dependency versions.
   * plugins to detect code coverage, and monkeypatches.
-  * cloud service to run tests, 
-  * full test reports for every npm package across node & dependency versions
 
 ##Support##
 
@@ -40,16 +43,12 @@ set node version of test process. will detect node versions installed by nvm.
     
 detect dependencies
 
-    > meta-test -plugin ./plugin/npm-remapper [] test/test.expresso.js
+    > meta-test -meta test/test.expresso.js
     
 remap dependencies
 
-    > meta-test -plugin ./plugin/npm-remapper [{\"package\":\"x.y.z\"}] test/test.expresso.js
+    > meta-test -remaps '{"request": "/path/to/file.js"}' test/test.expresso.js
 
-`-plugin` option takes two arguments. path to the plugin, then arguments to to plugin in json.
-to remap versions: `[[{packagename: version}]` (as many remaps as you like, must be vaild JSON)
-    
-    
 for more information use `meta-test --help`
 
 ##detecting test adapters.##
@@ -81,11 +80,7 @@ to use npm to run tests programmaticially:
     , adapter: nameOfAdapter // something from meta-test/adapters directory
     //optional
     , timeout: maxTimeInMilliseconds //defaults to 30e3 (30 seconds)
-    , plugins: [{
-        { require: toToPlugin //i.e. './plugins/npm-remapper'
-        , args: [{package: version}] //remap version of package (optional)
-        } 
-      }]
+    , remaps {request, fileToLoadInsteadOf_request
     }, callback)
     
     function callback (err,report){
@@ -95,26 +90,17 @@ to use npm to run tests programmaticially:
 
 ##Adapter API##
 
-a test adapter needs just one function, `run(tests,reporter)` it's two arguments are the exports module of the unit test, 
-and the report builder. it must also return a shutdown function, which will be called when the test runner is confidant that the test is complete (i.e. at exit). the shutdown function must be synchronous.
+a test adapter needs just one function, `run(tests,reporter)` 
+it has just two arguments:
 
-example of a very simple testing api for sync tests:
+ # tests: whatever the unit test exported
+ # reporter: the meta-test report builder.
 
-    exports.run = function (tests,reporter){
-    
-      for(var name in tests){
-        reporter.test(name) //log that the test has begun
-        try{
-          tests[name]()//run each test      
-        } catch (error){
-          reporter.test(name,error) //log the error     
-        }
-        //an async error will crash the process, but meta-test will catch it by scraping stderr!
-      }
-    
-      return function (){
-        //check that all tests are finished without errors
-        //this function will be called just before the test process exits.
-      }
-    
-    }
+it must return a shutdown function.
+
+the shutdown function can be used to check that all the tests where run, etc.
+
+the shutdown will be called when the test runner is confidant that the test is complete (i.e. at exit). 
+the shutdown function *must* be synchronous.
+
+see meta-test/adapters for examples of using the Adapter API
