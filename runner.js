@@ -40,8 +40,12 @@ function run(opts,cb){
   var timeToRun = opts.timeout || 30e3 //default to 30 seconds timeout
     , timer = 
         setTimeout(function stop (){
-          child.kill()
+          child.kill('SIGTSTP')
           errors.push(new Error("test '" + opts.filename + "' did not complete in under " + timeToRun + " milliseconds"))
+          timer = setTimeout(function kill(){
+            child.kill()
+            errors.push(new Error("test didn't exit properly after timeout. KILLED."))
+          },250)
         },timeToRun)
 
   child.on('exit',function (exStatus){

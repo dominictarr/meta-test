@@ -37,7 +37,12 @@ if(payload.remaps)
     shutdown = adapter.run(tests,reporter)
   }
 
-  process.on('exit',function(){
+  process.on('SIGTSTP',function (){
+    reporter.error(new Error("recieved stop signal due to timeout"))
+    process.exit()
+  })
+
+  function exit (){
   
     if(shutdown) shutdown()
 
@@ -50,4 +55,7 @@ if(payload.remaps)
     }))
 
     fs.writeFileSync(payload.tempfile,untangle.stringify(reporter.report))
-  })
+  
+  }
+
+  process.on('exit',exit)
