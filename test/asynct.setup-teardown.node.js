@@ -7,6 +7,8 @@ var helper = require('./lib/helper')
   , isPass = helper.isPass
   , isError = helper.isError
   , isFail = helper.isFail
+  , asynct = require('../adapters/asynct')
+  , Report = require('../report')
 
 /*
   unlike everything else in node, instead of the test adapter being called back when it's finished,
@@ -47,8 +49,6 @@ function check(report,name,status,tests){
   console.log('checked')
 }
 
-var asynct = require('../adapters/asynct')
-  , Report = require('../report')
   
 exports ['setup pass teardown'] = function (finish){
   var setups = 0
@@ -102,7 +102,6 @@ exports['setup fail error teardown'] = function (finish){
         },500)
       , '_teardown': helper.try(function afterFailTeardown(test){
           teardowns ++
-          //must be sync!
         },500)
       , 'fail': helper.checkCall(function (test){
             it(0).equal(1)

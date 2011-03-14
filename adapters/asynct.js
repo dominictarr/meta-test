@@ -3,129 +3,103 @@
 //simple async test adapter
 
 var assert = require('assert')
-
+  , ctrl = require('ctrlflow') 
 exports.run = run
 
-function run(tests,reporter){
-  var x, testNames, names = testNames = x = Object.keys(tests)
-  var currentNext, currentName
-  var setupX = /^__?setup$/
-    , teardownX = /^__?teardown$/
-    , setupAll = null
-    , teardownAll = null
-    , teardownCalled = false
-    , status = {}
+var isSetup = /^__?setup$/
+var isTeardown = /^__?teardown$/
+var isSetupTeardown = /^__?(setup|teardown)$/
 
-  names = names.filter(function (e){
-    if(setupX(e))
-      setupAll = tests[e]
-    else if(teardownX(e))
-      teardownAll = tests[e]
-    else
-      return true
+function run (tests,reporter){
+  var status = {}
+  var setup = [], teardown = []
+  var names = Object.keys(tests).filter(function (name){
+    if(isSetup(name))
+      setup.push(name)
+    else if (isTeardown(name))
+      teardown.push(name)
+    else return true
+  })
+  
+  names = setup.concat(names).concat(teardown)
+  
+  console.log(names)
+  
+  var tests = names.map(function (name){
+    var test = tests[name]
+    status[name] = 'not started'
+    return function (){
+      var __next = this.next
+        , finishAlready = false
+
+      if(! isSetupTeardown(name)) //don't report setup and teardown unless there is an error.
+        reporter.test(name)
+        
+      function next (){
+        status[name] = 'finished'
+        if(finishAlready)
+          return reporter.test(name,new Error('test \'' + name + '\' called finish twice'))
+        finishAlready = true
+        __next()
+      }
+    
+      function error(err){
+        reporter.test(name,err)
+        console.log(err.stack)
+        next()
+      }
+
+      var tester = new Tester(name,next)
+
+      function handle(err){
+        if('function' == typeof tester.catch){
+          try{
+            tester.catch(err)
+          } catch (err){
+            error(err)          
+          }        
+        } else {
+          error(err)
+        }
+      }
+      
+      process.removeAllListeners('uncaughtException')
+      process.on('uncaughtException',handle)
+      
+      try{ 
+        status[name] = 'started'
+        test.call(null,tester) 
+        if(isTeardown(name))
+          next()//teardown is sync!
+      } catch (err) {handle(err)}
+    }
   })
 
-  names.forEach(function (n){
-    status[n] = 'not started'
-  })
+  ctrl.seq(tests)()
+  
+  return function (){
+    process.removeAllListeners('uncaughtException')
 
-  testNames = [].concat(names)
+    var unfinished = names.forEach(function (name){
+      console.log(status)
+      console.log(Object.keys(tests))
+        
+        if(status[name] != 'finished')
+          reporter.test(name, "did not finish, state was: " + status[name])
+      })
+
+    
+//    process.removeAllListeners('uncaughtException')
+  }
+  
+}
 
   Tester.prototype = assert
 
-  function Tester (next,name){
+  function Tester (name,next){
     this.done = next
     this.finish = next
     this.name = name
     this.catch = null
     this.uncaughtExceptionHandler = null
   }
-  
-//  var inHandler = false
-  function handler (error){
-    if(currentTester.catch && inHandler == false){
-      inHandler = true
-      try{
-        currentTester.catch (error)
-        inHandler = false
-        return      
-      } catch (err){
-        console.log("CAUGHT ERROR IN ERROR HANDLER")
-        console.log(err.stack)
-        
-        error = err //continue to error handling part of this function.
-      }
-    }
-
-    if(currentName) {
-      status[currentName] = 'finished'
-
-      reporter.test(currentName,error)
-      console.log('calling next from error handler')
-      process.nextTick(currentNext || next)
-    } else {
-      reporter.error(error)
-    }
-  }
-
-  process.on('uncaughtException', handler)
-
-  if(setupAll){
-    currentName = '__setup'
-    setupAll(currentTester = new Tester(next,'__setup'))  
-  } else {
-    next()
-  }
-
-  function callTeardown(){
-    if(teardownAll && !teardownCalled){
-      teardownCalled = true
-      currentName = '__teardown'
-      
-      teardownAll(currentTester = new Tester(function (){
-        /*until node supports async process.exit teardown is async*/
-      },'__teardown'))              
-    }
-  }
-
-  function next(){
-    if(!names.length){
-      callTeardown()
-      return //stop starting tests and wait for shutdown to be called.
-    }
-
-    var name = currentName = names.shift()
-      , finished = false
-      , currentNext = safeNext
-      , tester = currentTester = new Tester(safeNext,name)
-    reporter.test(name)
-    try { 
-      status[name] = 'started'
-      tests[name](tester) 
-    } catch (error){
-      handler(error)
-    }
-    function safeNext(){
-      
-      if(!finished) {
-        status[currentName] = 'finished'
-
-        callTeardown()
-        finished = true
-        process.nextTick(next)
-      } else {
-        reporter.test(name,new Error('test \'' + name + '\' called finish twice'))
-      }
-    }
-  }
-
-  return function (){ //return a shutdown function, will be called on exit
-    testNames.forEach(function (c){
-      if(status[c] == 'not started')
-        reporter.test(c,"was not started. (did anmother test not call test.done()?)")
-      else if (status[c] == 'started')
-        reporter.test(c,"was started, but did not complete. (did anmother test not call test.done()?)")
-    })
-    process.removeListener('uncaughtException', handler)
-  }
-}

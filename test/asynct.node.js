@@ -8,7 +8,7 @@ var helper = require('./lib/helper')
   , isError = helper.isError
   , isFail = helper.isFail
   , assert = require('assert')
-  , asynct = require('../adapters/asynct2')
+  , asynct = require('../adapters/asynct')
   , Report = require('../report')
 
 // require('long-stack-traces/lib/long-stack-traces')
