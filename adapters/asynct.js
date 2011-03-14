@@ -32,18 +32,36 @@ function run(tests,reporter){
   testNames = [].concat(names)
 
   Tester.prototype = assert
+
   function Tester (next,name){
     this.done = next
     this.finish = next
     this.name = name
+    this.catch = null
+    this.uncaughtExceptionHandler = null
   }
-
+  
+//  var inHandler = false
   function handler (error){
+    if(currentTester.catch && inHandler == false){
+      inHandler = true
+      try{
+        currentTester.catch (error)
+        inHandler = false
+        return      
+      } catch (err){
+        console.log("CAUGHT ERROR IN ERROR HANDLER")
+        console.log(err.stack)
+        
+        error = err //continue to error handling part of this function.
+      }
+    }
 
     if(currentName) {
       status[currentName] = 'finished'
 
       reporter.test(currentName,error)
+      console.log('calling next from error handler')
       process.nextTick(currentNext || next)
     } else {
       reporter.error(error)
@@ -54,7 +72,7 @@ function run(tests,reporter){
 
   if(setupAll){
     currentName = '__setup'
-    setupAll(new Tester(next,'__setup'))  
+    setupAll(currentTester = new Tester(next,'__setup'))  
   } else {
     next()
   }
@@ -63,7 +81,8 @@ function run(tests,reporter){
     if(teardownAll && !teardownCalled){
       teardownCalled = true
       currentName = '__teardown'
-      teardownAll(new Tester(function (){
+      
+      teardownAll(currentTester = new Tester(function (){
         /*until node supports async process.exit teardown is async*/
       },'__teardown'))              
     }
@@ -74,18 +93,17 @@ function run(tests,reporter){
       callTeardown()
       return //stop starting tests and wait for shutdown to be called.
     }
-    console.log(names)
+
     var name = currentName = names.shift()
       , finished = false
       , currentNext = safeNext
-      , tester = new Tester(safeNext,name)
+      , tester = currentTester = new Tester(safeNext,name)
     reporter.test(name)
     try { 
       status[name] = 'started'
       tests[name](tester) 
     } catch (error){
-      reporter.test(name,error)
-      safeNext()
+      handler(error)
     }
     function safeNext(){
       

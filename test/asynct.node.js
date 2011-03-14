@@ -7,7 +7,11 @@ var helper = require('./lib/helper')
   , isPass = helper.isPass
   , isError = helper.isError
   , isFail = helper.isFail
+  , assert = require('assert')
+  , asynct = require('../adapters/asynct2')
+  , Report = require('../report')
 
+// require('long-stack-traces/lib/long-stack-traces')
 /*
   unlike everything else in node, instead of the test adapter being called back when it's finished,
   it gets called and is told to finish.
@@ -35,7 +39,6 @@ function makeBeforeExit(timeout) {
     doBefore = before
   }
 }
-var assert = require('assert')
 function check(report,name,status,tests){
 //  console.log('check')
     it(report)
@@ -44,18 +47,19 @@ function check(report,name,status,tests){
       , status: status
       , tests: tests
       })
-  console.log('checked')
 }
 
-var asynct = require('../adapters/asynct')
-  , Report = require('../report')
   
 exports ['pass'] = function (finish){
 
   var reporter = new Report('pass')
     , shutdown = 
       asynct.run({
+       /*'pass1': function (test){
+          process.nextTick(test.finish)
+        }*/
        'pass1': helper.try(function (test){
+//        console.log(test.finish.toString())
           process.nextTick(test.finish)
         },500)
       },reporter)
@@ -64,14 +68,15 @@ exports ['pass'] = function (finish){
 
   function done(){
     shutdown()
+    console.log('checking...')
     check
     ( reporter.report, 'pass','success',
       [ isPass('pass1') ] )
+    console.log('checked!...')
 
     finish()  
   }
 }
-
 
 exports ['error'] = function (finish){
   var reporter = new Report('error')
@@ -97,7 +102,6 @@ exports ['error'] = function (finish){
     finish()  
   }
 }
-
 
 exports ['failure'] = function (finish){
   var reporter = new Report('failure')
@@ -137,9 +141,10 @@ exports ['double finish'] = function (finish){
     },500)
   },reporter)
 
-  setTimeout(done,200)
+  setTimeout(helper.try(done),200)
 
   function done(){
+    shutdown()
     check
     ( reporter.report, 'double finish','error',
       [ isError('badfinish1', { message:it.matches(/called finish twice/) } ) ] )
@@ -174,7 +179,6 @@ exports ['double error'] = function (finish){
 
   function done(){
     shutdown()
-    console.log("DONE")
     check
     ( reporter.report, 'double error','error',
       [ isError('badfinish3', { message:"FIRST ERROR" }, { message:"SECOND ERROR" } ) ] )
@@ -210,6 +214,75 @@ exports ['error if tests not executed'] = function (finish){
     ( reporter.report, 'error if tests not executed','error',
       [ isPass('pass'), isError('not called 1'), isError('not called 2') ] )
 
+    finish()  
+  }
+}
+//*/
+/*
+asynct is getting messy. time for a rewrite.
+
+*/
+
+exports ['user can catch async errors'] = function (finish){
+  var reporter = new Report('user catch')
+    , error = new Error ("INTENSIONAL ERROR for user catch")
+    , caught1 = false,caught2 = false,caught3 = false
+    , shutdown = 
+  asynct.run({
+    'user catch': function (test){
+
+     test.catch = function (err){
+      console.log("handling:" + err.message)
+        if(caught1)
+          helper.crash(new Error("Error handler should have only been called once:" + err.stack).stack)
+        caught1 = true
+        it(err).equal(error)
+        test.done()
+      }
+        throw error
+    },
+    'user catch async': function (test){
+
+     test.catch = function (err){
+      console.log("handling:" + err.message)
+        if(caught2)
+          helper.crash(new Error("Error handler should have only been called once:" + err.stack).stack)
+        caught2 = true
+        it(err).equal(error)
+        test.done()
+      }
+      
+      process.nextTick(function (){
+        throw error
+      })
+    },
+    'user catch error': function (test){
+
+      test.catch = function (err){
+        if(caught3)
+          helper.crash(new Error("Error handler should have only been called once:" + err.stack).stack)
+        caught3 = true
+        throw new Error("INTENSIONAL ERROR 2")
+        
+      }      
+      process.nextTick(function (){
+        throw error
+      })
+    }
+  },reporter) 
+
+  setTimeout(helper.try(done),300)
+
+  function done(){
+    shutdown()
+    console.log(reporter.report)
+    check
+    ( reporter.report, 'user catch','error',
+      [ isPass('user catch')
+      , isPass('user catch async')
+      , isError('user catch error', {message: "INTENSIONAL ERROR 2"}) 
+      ] )
+    it(caught1).ok()
     finish()  
   }
 }

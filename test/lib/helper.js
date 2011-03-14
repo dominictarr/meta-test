@@ -35,7 +35,7 @@ function isError(name,error){
 
 function runSync(tests){
   for(var name in tests){
-    console.log(name)
+    console.log("TEST:",name)
     tests[name]()
   }
   console.log('*all passed*')
@@ -75,8 +75,6 @@ function TRY (func,timeout){
   }
 }
 
-
-
 //setInterval(function (){console.log('.')},50)
 
 function runAsync(tests){
@@ -87,8 +85,8 @@ function runAsync(tests){
   function next(){
     var name = names.shift()
     if(name){
+      console.log("TEST:",name)
       tests[name](function (){process.nextTick(next)})
-//      tests[name](next)
     } else
       console.log('*all passed*')
   }
