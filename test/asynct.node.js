@@ -287,6 +287,70 @@ exports ['user can catch async errors'] = function (finish){
   }
 }
 
+exports ['user can catch async errors - with async_testing api'] = function (finish){
+  var reporter = new Report('user catch')
+    , error = new Error ("INTENSIONAL ERROR for user catch")
+    , caught1 = false,caught2 = false,caught3 = false
+    , shutdown = 
+  asynct.run({
+    'user catch': function (test){
+
+     test.uncaughtExceptionHandler = function (err){
+      console.log("handling:" + err.message)
+        if(caught1)
+          helper.crash(new Error("Error handler should have only been called once:" + err.stack).stack)
+        caught1 = true
+        it(err).equal(error)
+        test.done()
+      }
+        throw error
+    },
+    'user catch async': function (test){
+
+     test.uncaughtExceptionHandler = function (err){
+      console.log("handling:" + err.message)
+        if(caught2)
+          helper.crash(new Error("Error handler should have only been called once:" + err.stack).stack)
+        caught2 = true
+        it(err).equal(error)
+        test.done()
+      }
+      
+      process.nextTick(function (){
+        throw error
+      })
+    },
+    'user catch error': function (test){
+
+      test.uncaughtExceptionHandler = function (err){
+        if(caught3)
+          helper.crash(new Error("Error handler should have only been called once:" + err.stack).stack)
+        caught3 = true
+        throw new Error("INTENSIONAL ERROR 2")
+        
+      }      
+      process.nextTick(function (){
+        throw error
+      })
+    }
+  },reporter) 
+
+  setTimeout(helper.try(done),300)
+
+  function done(){
+    shutdown()
+    console.log(reporter.report)
+    check
+    ( reporter.report, 'user catch','error',
+      [ isPass('user catch')
+      , isPass('user catch async')
+      , isError('user catch error', {message: "INTENSIONAL ERROR 2"}) 
+      ] )
+    it(caught1).ok()
+    finish()  
+  }
+}
+
 
 /*
 exports ['finish then error'] = function (finish){

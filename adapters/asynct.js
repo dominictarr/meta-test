@@ -32,7 +32,7 @@ function run (tests,reporter){
       var __next = this.next
         , finishAlready = false
 
-      if(! isSetupTeardown(name)) //don't report setup and teardown unless there is an error.
+      if(!isSetupTeardown(name)) //don't report setup and teardown unless there is an error.
         reporter.test(name)
         
       function next (){
@@ -52,9 +52,10 @@ function run (tests,reporter){
       var tester = new Tester(name,next)
 
       function handle(err){
-        if('function' == typeof tester.catch){
+        var catcher = tester.catch || tester.uncaughtExceptionHandler
+        if('function' == typeof catcher){
           try{
-            tester.catch(err)
+            catcher(err)
           } catch (err){
             error(err)          
           }        
@@ -70,7 +71,10 @@ function run (tests,reporter){
         status[name] = 'started'
         test.call(null,tester) 
         if(isTeardown(name))
-          next()//teardown is sync!
+          next()//teardown is sync! .. 
+        //on second thoughts this is probably not a good idea.
+        //maybe, by hooking process.nextTick and the events you could have an 
+        //event loop drain event, so that you know when the process is about to exit.
       } catch (err) {handle(err)}
     }
   })
@@ -79,7 +83,7 @@ function run (tests,reporter){
   
   return function (){
     process.removeAllListeners('uncaughtException')
-
+    
     var unfinished = names.forEach(function (name){
       console.log(status)
       console.log(Object.keys(tests))
