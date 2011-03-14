@@ -5,31 +5,10 @@
 var assert = require('assert')
   , ctrl = require('ctrlflow') 
 exports.run = run
-  console.log("NAMES SDFADASDAS D")
 
 function run (tests,reporter){
-  console.log("NAMES SDFADASDAS D")
   var status = {}
-  var setup = [], teardown = []
-  var names = Object.keys(tests).filter(function (name){
-    console.log(name)
-    if (/^__?setup$/(name))
-      setup.push(name)
-    else if (/^__?teardown$/(name))
-      teardown.push(name)
-    else
-      return true
-  }
-  
-  names = setup.concat(names).concat(teardown)
-  
-  console.log("NAMES SDFADASDAS D")
-
-  console.log(names)
-  
-  //if there is setup and teardown functions move them to the start end and respectively.
-  
-
+  var names = Object.keys(tests)
   var tests = names.map(function (name){
     var test = tests[name]
     status[name] = 'not started'
