@@ -7,6 +7,9 @@ var helper = require('./lib/helper')
   , isPass = helper.isPass
   , isError = helper.isError
   , isFail = helper.isFail
+  , assert = require('assert')
+  , asynct = require('../adapters/asynct2')
+  , Report = require('../report')
 
 /*
   unlike everything else in node, instead of the test adapter being called back when it's finished,
@@ -35,7 +38,6 @@ function makeBeforeExit(timeout) {
     doBefore = before
   }
 }
-var assert = require('assert')
 function check(report,name,status,tests){
 //  console.log('check')
     it(report)
@@ -47,9 +49,6 @@ function check(report,name,status,tests){
   console.log('checked')
 }
 
-var asynct = require('../adapters/asynct')
-  , Report = require('../report')
-  
 exports ['setup pass teardown'] = function (finish){
   var setups = 0
     , teardowns = 0
@@ -58,17 +57,21 @@ exports ['setup pass teardown'] = function (finish){
       asynct.run({
        '_setup': helper.try(function (test){
           //called only once
+//          console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
           setups ++
           process.nextTick(test.finish)
         },500)
       ,'_teardown': helper.try(function (test){
+//        it(teardowns).equal(0)
         teardowns ++
         //must be sync!
         },500)
       , 'pass1': helper.try(function (test){
+  //        it(teardowns).equal(0)
           process.nextTick(test.finish)
         },500)
       , 'pass2': helper.try(function (test){
+    //      it(teardowns).equal(0)
           process.nextTick(test.finish)
         },500)
       },reporter)
@@ -95,21 +98,27 @@ exports['setup fail error teardown'] = function (finish){
     , reporter = new Report('pass')
     , shutdown = 
       asynct.run({
-        '_setup': helper.try(function (test){
-          //called only once
-          setups ++
-          process.nextTick(test.finish)
-        },500)
-      , '_teardown': helper.try(function afterFailTeardown(test){
+        '_teardown': helper.try(function afterFailTeardown(test){
+          it(setups).equal(1)
           teardowns ++
           //must be sync!
         },500)
       , 'fail': helper.checkCall(function (test){
+          it(setups).equal(1)
+          it(teardowns).equal(0)
             it(0).equal(1)
         },500)
       , 'error': helper.checkCall(function (test){
+          it(teardowns).equal(0)
+          it(setups).equal(1)
           throw new Error('INTENSIONAL ERROR')
         },500)
+      , '_setup': helper.try(function (test){
+          //called only once
+          setups ++
+          process.nextTick(test.finish)
+        },500)
+
       },reporter)
 
   setTimeout(done,200)
