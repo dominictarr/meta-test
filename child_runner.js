@@ -22,7 +22,6 @@ var depends = require('./depends')
 
 if(payload.remaps)
   depends.remap(payload.remaps)
-    console.log(payload.remaps)
 
   try{
     tests = loader.load(payload.filename)

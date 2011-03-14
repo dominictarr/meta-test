@@ -4,11 +4,11 @@
 
 var assert = require('assert')
   , ctrl = require('ctrlflow') 
-exports.run = run
+  , isSetup = /^__?setup$/
+  , isTeardown = /^__?teardown$/
+  , isSetupTeardown = /^__?(setup|teardown)$/
 
-var isSetup = /^__?setup$/
-var isTeardown = /^__?teardown$/
-var isSetupTeardown = /^__?(setup|teardown)$/
+exports.run = run
 
 function run (tests,reporter){
   var status = {}
@@ -22,8 +22,6 @@ function run (tests,reporter){
   })
   
   names = setup.concat(names).concat(teardown)
-  
-  console.log(names)
   
   var tests = names.map(function (name){
     var test = tests[name]
@@ -84,26 +82,20 @@ function run (tests,reporter){
   return function (){
     process.removeAllListeners('uncaughtException')
     
-    var unfinished = names.forEach(function (name){
-      console.log(status)
-      console.log(Object.keys(tests))
-        
+    names.forEach(function (name){
         if(status[name] != 'finished')
           reporter.test(name, "did not finish, state was: " + status[name])
-      })
-
-    
-//    process.removeAllListeners('uncaughtException')
+    })
   }
   
 }
 
-  Tester.prototype = assert
+Tester.prototype = assert
 
-  function Tester (name,next){
-    this.done = next
-    this.finish = next
-    this.name = name
-    this.catch = null
-    this.uncaughtExceptionHandler = null
-  }
+function Tester (name,next){
+  this.done = next
+  this.finish = next
+  this.name = name
+  this.catch = null
+  this.uncaughtExceptionHandler = null
+}
