@@ -1,7 +1,7 @@
 {
   "name": "meta-test",
   "description": "framework for writing unit test frameworks",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "http://github.com/dominictarr/meta-test",
   "repository": "git://github.com/dominictarr/meta-test2.git",
   "author": "Dominic Tarr <dominic.tarr@gmail.com>",
@@ -16,8 +16,10 @@
     "style": "0.1.x"
   , "easyfs": "*"
   , "nih-op": "*"
+  , "ctrlflow": "*"
   , "nodeunit": ">=0.5.0"
-  , "expresso": ">=0.6.0"
+  , "vows": ">=0.5.0"
+  , "expresso": ">=0.7.0"
   , "trees": "*"
   , "nvm": ">=0.0.6"
   },

@@ -174,7 +174,5 @@ exports.sorted = function (id){
 }
 
 exports.remap = function (maps){
-  console.log('remaps')
-  console.log(module.constructor.prototype._remaps)
   module.constructor.prototype._remaps = maps
 }

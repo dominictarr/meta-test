@@ -351,6 +351,40 @@ exports ['user can catch async errors - with async_testing api'] = function (fin
   }
 }
 
+/*
+.error , .failure method to log an error without throwing it.
+useful for get errors through to the report when testing servers and things that just keeps on going.
+*/
+
+exports ['log error/failure'] = function (){
+  var reporter = new Report('logged error')
+    , shutdown = 
+      asynct.run({
+       'error1': helper.try(function (test){
+          setTimeout(function (){
+            console.log("throw!")
+
+            test.failure(new Error ("SYNC ERROR"))
+            process.nextTick(function (){
+              test.error(new Error ("ASYNC ERROR2"))
+              test.done()
+            })
+          },0)
+        },500)
+      },reporter)
+
+  setTimeout(done,200)
+
+  function done(err,report){
+    shutdown()
+    check
+    ( reporter.report, 'logged error','error1',
+      [ isError('error1',[{message: "SYNC ERROR"},{message: "ASYNC ERROR"}) ] )
+
+    finish()  
+  }
+}
+
 
 /*
 exports ['finish then error'] = function (finish){
