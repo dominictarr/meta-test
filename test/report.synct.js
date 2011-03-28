@@ -12,7 +12,7 @@ test ['a Report'] = function (){
   it(Report(__filename))
     .has({
       report: is.complex()
-    , test: is.function()
+    , test: is['function']()
     })
   var r = Report(__filename)
   
@@ -173,4 +173,4 @@ test ['add metadata' ] = function (){
 //for(var i in test)
 //  test[i]()
 
-helper.runSync(test)
+//helper.runSync(test)

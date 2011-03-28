@@ -356,7 +356,7 @@ exports ['user can catch async errors - with async_testing api'] = function (fin
 useful for get errors through to the report when testing servers and things that just keeps on going.
 */
 
-exports ['log error/failure'] = function (){
+exports ['log error/failure'] = function (finish){
   var reporter = new Report('logged error')
     , shutdown = 
       asynct.run({
@@ -378,8 +378,8 @@ exports ['log error/failure'] = function (){
   function done(err,report){
     shutdown()
     check
-    ( reporter.report, 'logged error','error1',
-      [ isError('error1',[{message: "SYNC ERROR"},{message: "ASYNC ERROR"}) ] )
+    ( reporter.report, 'logged error','error',
+      [ isError('error1',[{message: "SYNC ERROR"},{message: "ASYNC ERROR2"}]) ] ) 
 
     finish()  
   }

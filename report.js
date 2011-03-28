@@ -78,4 +78,3 @@ function Report (filename){
     , tests: [] }
   this.tests = {}
 }
-

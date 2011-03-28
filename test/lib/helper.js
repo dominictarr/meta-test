@@ -9,7 +9,7 @@ exports.runSync = runSync
 exports.runAsync = runAsync
 
 exports.crash = crash
-exports.try = TRY
+exports['try'] = TRY
 exports.checkCall = checkCall
 
 
@@ -24,7 +24,7 @@ function isFail(name,fail){
           })
 }
 function isError(name,error){
-  var errors = [error]
+  var errors = Array.isArray(error) ? error : [error]
   if(arguments.length <= 1)
     errors = []
   return it.has({ name: name

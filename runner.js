@@ -1,20 +1,3 @@
-/*
-simplest test runner.
-
-child-side
-  { adapter:  require test adapter (if it is defined)
-  , version: v0.4.1
-  , test:  require module
-  , tempfile: write on exit }
-  on exit
-    write report to temp file.
-
-parent-side
-  start child with a json payload of require, adapter, tempfile
-  
-  when child exits, check if temp file created, scrape std error if exit value is non zero.
-
-*/
 
 var Report = require('./report')
   , Plugins = require('./plugins')
@@ -37,7 +20,7 @@ function run(opts,cb){
   child.stdout.on('data',function(e){ process.stdout.write(e) })
   child.stderr.on('data',function(e){ stderr += '' + e; process.stderr.write(e) })
 
-  var timeToRun = opts.timeout || 30e3 //default to 30 seconds timeout
+  var timeToRun = opts.timeout || 30e3
     , timer = 
         setTimeout(function stop (){
           child.kill('SIGTSTP')
@@ -59,7 +42,7 @@ function run(opts,cb){
 
       function c(err,json){
         if(!err)
-          fs.unlink(opts.tempfile) //delete temp file.
+          fs.unlink(opts.tempfile) 
         else
           errors.push(err)
         try {
@@ -77,6 +60,5 @@ function run(opts,cb){
             })
         }
       }
-
   })
 }

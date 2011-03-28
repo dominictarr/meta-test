@@ -43,11 +43,10 @@ function run (tests,reporter){
     
       function error(err){
         reporter.test(name,err)
-        console.log(err.stack)
         next()
       }
 
-      var tester = new Tester(name,next)
+      var tester = new Tester(name,next,function (err){reporter.test(name,err)})
 
       function handle(err){
         var catcher = tester.catch || tester.uncaughtExceptionHandler
@@ -77,7 +76,7 @@ function run (tests,reporter){
     }
   })
 
-  ctrl.seq(tests)()
+  ctrl.seq(tests,function (err){throw err})()
   
   return function (){
     process.removeAllListeners('uncaughtException')
@@ -92,10 +91,12 @@ function run (tests,reporter){
 
 Tester.prototype = assert
 
-function Tester (name,next){
+function Tester (name,next,handler){
   this.done = next
   this.finish = next
   this.name = name
   this.catch = null
+  this.failure = handler
+  this.error = handler
   this.uncaughtExceptionHandler = null
 }
