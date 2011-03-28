@@ -19,6 +19,24 @@ function update(old, newer){
     return order[o > n ? o : n]
 }
 
+function min (array,func){
+  var m = 'success'
+  for(var i in array){
+    var n = func(array[i],i,array)
+    if(n && n < m)
+      m = n
+  }
+  return m
+}
+
+function getStatus (array){
+  return min(array,function (e){
+    if(e && e.name && e.name === "AssertionError")
+      return stati.failure
+    return stati.error
+  })
+}
+
 Report.prototype = {
   test: function (name,error){
     
@@ -28,14 +46,7 @@ Report.prototype = {
         { name: name
         , failures: arguments.length > 1 ? [error] : []
         , get status (){
-            var stat = stati.success
-            for(var i in this.failures){
-              if(!(this.failures[i] && this.failures[i].name &&  this.failures[i].name == "AssertionError"))
-                return stati.error
-              else
-                stat = stati.failure
-            }
-            return stat
+            return getStatus(this.failures)
           }
         }
 
@@ -66,14 +77,9 @@ function Report (filename){
     , version: process.version
     , meta: {}
     , get status (){
-        var stat = stati.success
-        if(this.errors.length)
-          return stati.error
-        
-        this.tests.forEach(function (e){
-          stat = update(stat,e.status)
-        })
-        return stat
+        var m = getStatus(this.errors),
+          n = min(this.tests,function (e){return e.status})
+          return n < m ? n : m
       }
     , tests: [] }
   this.tests = {}

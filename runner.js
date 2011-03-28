@@ -48,7 +48,7 @@ function run(opts,cb){
         try {
           var report = untangle.parse(json)
           report.errors = [].concat(report.errors).concat(errors)
-          if(report.errors.length)
+          if(report.errors.length && report.status  === 'success')
             report.status = 'error'
           cb(null,report)
         } catch (err){

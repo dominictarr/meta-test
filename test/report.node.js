@@ -141,6 +141,23 @@ test ['a Report with a global string error'] = function (){
     })
 }
 
+test ['a Report with a global AssertionError'] = function (){
+  var r = Report(__filename)
+    , err = undefined
+    , ass = new assert.AssertionError ({message: "EXAMPLE ASSERTION ERROR"})
+
+  r.error(ass)
+
+  it(r.report)
+    .has({
+      filename: __filename
+    , tests: is.deepEqual([])
+    , errors: is.deepEqual([ass])
+    , status: Report.status.failure
+    })
+}
+
+
 test ['test functions are chainable'] = function (){
 
  var r = Report(__filename)
