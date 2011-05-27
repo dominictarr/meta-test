@@ -68,7 +68,8 @@ dependency report. (copy depends and filename, source hash etc from module)
 */
 if(module.constructor.prototype._depends)
   return module.constructor.prototype._depends
-else module.constructor.prototype._depends = exports
+else 
+  module.constructor.prototype._depends = exports
 
 var allSorted = exports.allSorted = []
 var levels = {}
@@ -176,3 +177,6 @@ exports.sorted = function (id){
 exports.remap = function (maps){
   module.constructor.prototype._remaps = maps
 }
+
+//  console.log(module.constructor.prototype._depends)
+

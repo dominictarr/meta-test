@@ -4,6 +4,9 @@ var helper = require('./lib/helper')
   , it = require('it-is')
   , parser = require('../arg-parser')
   , path = require('path')
+  , platform = require('../platform')
+  
+  platform.list = ['v0.3.0','v0.3.7', process.version] 
 function parse(cmd,dir){
 
   var parsed = 
@@ -72,6 +75,7 @@ exports ['remaps'] = function (){
 }
 
 exports ['report & timeout'] = function (){
+
   it(parser.parse("-logger json -timeout 1e3".split(' '),dir))
     .has({
       logger: 'json'

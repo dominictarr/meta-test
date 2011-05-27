@@ -73,7 +73,7 @@ var Nihop = require('nih-op')
   .option('version','v',1).do(function (value){
       version = value
       command = platform.command(value)
-    if(!command)
+    if(!~platform.list.indexOf(value))
       throw ("meta-test does not know node version '" +  version + "' \n"
       + "try one of:\n" + platform.list.join('\n'))
     })
