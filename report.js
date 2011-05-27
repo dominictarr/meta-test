@@ -39,8 +39,7 @@ function getStatus (array){
 
 Report.prototype = {
   test: function (name,error){
-    
-  
+
     if(!this.tests[name]) {
       var test = 
         { name: name
@@ -57,7 +56,7 @@ Report.prototype = {
     return this
   }
 , error: function (err){
-    this.report.errors.push (err)
+    this.report.failures.push (err)
     
     return this
   }
@@ -72,12 +71,12 @@ function Report (filename){
   if(!(this instanceof Report)) return new Report(filename)
   this.report = 
     { filename: filename
-    , errors: []
+    , failures: []
     , os: process.platform
     , version: process.version
     , meta: {}
     , get status (){
-        var m = getStatus(this.errors),
+        var m = getStatus(this.failures),
           n = min(this.tests,function (e){return e.status})
           return n < m ? n : m
       }

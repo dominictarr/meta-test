@@ -1,6 +1,6 @@
 //runner.asynct.js
 var runner = require('../runner')
-  , it, is = it = require('it-is')
+  , it, is = it = require('it-is').style('colour')
   , log = console.log
   , helper = require('./lib/helper')
   , platform = require('../platform')
@@ -16,7 +16,7 @@ exports ['run a file and make a report'] = function (finish){
       .has({
         filename: testFile
       , tests: [ { failures: [ {message: "INTENSIONAL ERROR"} ] } ]
-      , errors: [
+        , failures: [
         {message: it.matches(/timeout/)}
       , {message: it.matches(/did not complete/)}
       ]
@@ -36,7 +36,7 @@ exports ['run a file and make a report - expresso'] = function (finish){
       .has({
         filename: testFile
       , tests: [ { failures: [ {message: "INTENSIONAL ERROR"} ] } ]
-      , errors: [
+      , failures: [
         {message: it.matches(/timeout/)}
       , {message: it.matches(/did not complete/)}
       ]

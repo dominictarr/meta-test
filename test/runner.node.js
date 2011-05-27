@@ -16,7 +16,7 @@ exports ['run a file and make a report'] = function (finish){
       .has({
         filename: testFile
       , tests: is.deepEqual([])
-      , errors: is.deepEqual([])
+      , failures: is.deepEqual([])
       , status: 'success'
       })
     finish()
@@ -34,7 +34,7 @@ function hasError(testFile,check,done){
       .has({
         filename: testFile
       , tests: is.deepEqual([])
-      , errors: check
+      , failures: check
       , status: 'error'
       })
     done()
@@ -64,7 +64,7 @@ exports ['run dummy-adapter'] = function (finish){
   function check (err,report){
     it(report)
       .has({
-        errors: ['dummy-adapter']
+        failures: ['dummy-adapter']
       ,  tests: [
           { name: 'dummy1'
           , failures: [2345678] }
@@ -90,9 +90,8 @@ exports ['stop child after timeout'] = function (finish){
     
     it(report)
       .has({  
-        errors: [{ message: it.matches(/did not complete/) }]
+        failures: [{ message: it.matches(/did not complete/) }]
       })
-
 
     finish()      
   }
@@ -109,7 +108,7 @@ exports ['defaults to current version'] = function (finish){
       .has({
         filename: testFile
       , tests: is.deepEqual([])
-      , errors: is.deepEqual([])
+      , failures: is.deepEqual([])
       , status: 'success'
       , version: process.version
       })

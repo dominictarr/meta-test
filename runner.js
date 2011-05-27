@@ -15,7 +15,7 @@ function run(opts,cb){
 
   var child = spawn((opts.command || process.execPath), [ __dirname + '/child_runner.js', JSON.stringify(opts) ])
     , stderr = ''
-    , errors = []
+    , failures = []
 
   child.stdout.on('data',function(e){ process.stdout.write(e) })
   child.stderr.on('data',function(e){ stderr += '' + e; process.stderr.write(e) })
@@ -24,18 +24,18 @@ function run(opts,cb){
     , timer = 
         setTimeout(function stop (){
           child.kill('SIGTSTP')
-          errors.push(new Error("test '" + opts.filename + "' did not complete in under " + timeToRun + " milliseconds"))
+          failures.push(new Error("test '" + opts.filename + "' did not complete in under " + timeToRun + " milliseconds"))
           timer = setTimeout(function kill(){
             child.kill()
-            errors.push(new Error("test didn't exit properly after timeout. KILLED."))
+            failures.push(new Error("test didn't exit properly after timeout. KILLED."))
           },250)
         },timeToRun)
 
   child.on('exit',function (exStatus){
   
       if(exStatus){
-        errors.push(stderr)
-        errors.push(exStatus)
+        failures.push(stderr)
+        failures.push(exStatus)
       }
       clearTimeout(timer)
       fs.readFile(opts.tempfile, 'utf-8', c)
@@ -44,18 +44,18 @@ function run(opts,cb){
         if(!err)
           fs.unlink(opts.tempfile) 
         else
-          errors.push(err)
+          failures.push(err)
         try {
           var report = untangle.parse(json)
-          report.errors = [].concat(report.errors).concat(errors)
-          if(report.errors.length && report.status  === 'success')
+          report.failures = [].concat(report.failures).concat(failures)
+          if(report.failures.length && report.status  === 'success')
             report.status = 'error'
           cb(null,report)
         } catch (err){
           cb(null,{ filename: opts.filename
             , tests: []
             , status : 'error'
-            , errors: errors
+            , failures: failures
             , version: opts.version
             })
         }

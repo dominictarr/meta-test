@@ -1,6 +1,6 @@
 //report.expresso.js
 
-var it, is = it = require('it-is')
+var it = require('it-is')
   , Report = require('../report')
   , helper = require('./lib/helper')
   , test = module.exports
@@ -11,8 +11,8 @@ test ['a Report'] = function (){
 
   it(Report(__filename))
     .has({
-      report: is.complex()
-    , test: is.function()
+      report: it.complex()
+    , test: it.function()
     })
   var r = Report(__filename)
   
@@ -44,7 +44,7 @@ test ['a Report with an several errors'] = function (){
   it(r.report)
     .has({
       filename: __filename
-    , tests: [ {name: 'error', failures: [is.equal(err),is.equal(err2)] } ]
+    , tests: [ {name: 'error', failures: [it.equal(err),it.equal(err2)] } ]
     })
 }
 
@@ -63,10 +63,10 @@ test ['a Report with status'] = function (){
       filename: __filename
     , tests: [ 
         { name: 'error'
-        , failures: [is.equal(err)]
+        , failures: [it.equal(err)]
         , status: Report.status.error }
       , { name: 'fail'
-        , failures: [is.equal(ass)]
+        , failures: [it.equal(ass)]
         , status: Report.status.failure }
       , { name: 'pass'
         , failures: it.deepEqual([])
@@ -85,8 +85,8 @@ test ['a Report with a global error'] = function (){
   it(r.report)
     .has({
       filename: __filename
-    , tests: is.deepEqual([])
-    , errors: [is.equal(err)]
+    , tests: it.deepEqual([])
+    , failures: [it.equal(err)]
     , status: Report.status.error
     })
 }
@@ -99,12 +99,12 @@ test ['a Report with a global string error'] = function (){
   it(r.report)
     .has({
       filename: __filename
-    , tests: is.deepEqual([])
-    , errors: [is.equal(err)]
+    , tests: it.deepEqual([])
+    , failures: [it.equal(err)]
     , status: Report.status.error
     })
 }
-test ['any thrown non AssertionError is an error status'] = function (){
+test ['any thrown non AssertionError it an error status'] = function (){
   var errors = [[], new Error, "hello", false, 324, undefined, null]
   
   it(errors)
@@ -135,8 +135,8 @@ test ['a Report with a global string error'] = function (){
   it(r.report)
     .has({
       filename: __filename
-    , tests: is.deepEqual([])
-    , errors: is.deepEqual([undefined])
+    , tests: it.deepEqual([])
+    , failures: it.deepEqual([undefined])
     , status: Report.status.error
     })
 }
@@ -151,8 +151,8 @@ test ['a Report with a global AssertionError'] = function (){
   it(r.report)
     .has({
       filename: __filename
-    , tests: is.deepEqual([])
-    , errors: is.deepEqual([ass])
+    , tests: it.deepEqual([])
+    , failures: it.deepEqual([ass])
     , status: Report.status.failure
     })
 }
@@ -181,9 +181,9 @@ test ['add metadata' ] = function (){
  var r = Report(__filename)
    , s = Report(__filename)
  
- it(r.meta('returnThis','value')).equal(r)//return this so it's chainable.
+ it(r.meta('returnThit','value')).equal(r)//return thit so it's chainable.
  
- it(r.report).has({meta:{'returnThis': 'value'}})
+ it(r.report).has({meta:{'returnThit': 'value'}})
   
 }
 
