@@ -14,7 +14,7 @@ exports ['run a file and make a report'] = function (finish){
   function cb(err,report){
     it(report)
       .has({
-        filename: testFile
+        name: testFile
       , tests: [ { failures: [ {message: "INTENSIONAL ERROR"} ] } ]
         , failures: [
         {message: it.matches(/timeout/)}
@@ -34,7 +34,7 @@ exports ['run a file and make a report - expresso'] = function (finish){
   function cb(err,report){
     it(report)
       .has({
-        filename: testFile
+        name: testFile
       , tests: [ { failures: [ {message: "INTENSIONAL ERROR"} ] } ]
       , failures: [
         {message: it.matches(/timeout/)}

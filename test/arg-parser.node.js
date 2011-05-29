@@ -5,7 +5,7 @@ var helper = require('./lib/helper')
   , parser = require('../arg-parser')
   , path = require('path')
   , platform = require('../platform')
-  
+
   platform.list = ['v0.3.0','v0.3.7', process.version] 
 function parse(cmd,dir){
 
@@ -114,6 +114,10 @@ exports ['plugins'] = function (){
       
       ]
     })
+}
+
+exports ['PACKAGE.JSON is valid'] = function (){
+  it(require('../')).property('version',JSON.stringify(require('fs').readFileSync(__dirname + '/../package.json')).version)
 }
 
 

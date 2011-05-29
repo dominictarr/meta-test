@@ -37,10 +37,10 @@ function indent (lines){
   if(lines)
     return lines.split('\n').map(function (e){ return '  ' + e }).join('\n')
 }
-function errors(errors){
-  if(errors.length)
-//    return errors.join('\n')
-    return errors.map(styleError).join('\n')
+function failures(failures){
+  if(failures.length)
+//    return failures.join('\n')
+    return failures.map(styleError).join('\n')
 }
 
 
@@ -53,20 +53,20 @@ function tests(tests){
   return tests.map(function (test){
     return indent ( para
       ( styles[test.status](test.name)
-      ,  indent(errors(test.failures) ) 
+      ,  indent(failures(test.failures) ) 
       ) )
   }).join('\n')
 }
 
 function toString(report){
 
-  var fn = report.filename.replace(process.env.PWD + '/','')
+  var fn = report.name.replace(process.env.PWD + '/','')
 //  console.log(report.version)
   return para
   ( style('node-' + (report.version)).bold
   , styles[report.status](fn) + '    ' + bar(report.tests)
 //  , (report.meta && Object.keys(report.meta).length) ? "MetaData:\n" + render(report.meta, {multi: true}) : null
-  , errors(report.errors)
+  , failures(report.failures)
   , tests(report.tests)
   )
   

@@ -5,7 +5,8 @@ var Nihop = require('nih-op')
   , adapter
   , tests = []
   , platform = require('./platform')
-  , parser = new Nihop("meta-test [opts/files]\n", "~~~ Meta-Test ~~~\n\n  for additional docs see:\n  http://github.com/dominictarr/meta-test\n")
+  , version = require('./runner').version
+  , parser = new Nihop("meta-test [opts/files]\n", "~~~ Meta-Test (" + version + ") ~~~\n\n  for additional docs see:\n  http://github.com/dominictarr/meta-test\n")
   , pwd = process.env.PWD
   , path = require('path')
   , adapters = 

@@ -24,10 +24,12 @@ function next (){
     return finish()
 
   runner.run(test, done)
-  
+
   function done(err,report){
     if(err) throw err
     reports.push(report)
+    //subreport 
+    // -- move this (untested) code into runner, let it handle running each test.
     next()
   }
 }
@@ -36,7 +38,7 @@ function finish(){
  if(parsed.logger == 'json')
    return console.log(JSON.stringify(reports))
 
-  console.log("Meta-Test ~ " + new Date + "\n")
+  console.log("Meta-Test ~ " + runner.version + "\n")
 
   reports.map(function (e){
     if(parsed.logger == 'pretty'){

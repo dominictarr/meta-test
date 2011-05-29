@@ -70,7 +70,8 @@ Report.prototype = {
 function Report (filename){
   if(!(this instanceof Report)) return new Report(filename)
   this.report = 
-    { filename: filename
+    { name: filename
+    , filename: filename
     , failures: []
     , os: process.platform
     , version: process.version

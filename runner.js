@@ -3,11 +3,12 @@ var Report = require('./report')
   , Plugins = require('./plugins')
   , fs = require('fs')
   , untangle = require('trees').untangle
-
 var spawn = require('child_process').spawn
   , util = require('sys')
 
 exports.run = run
+
+exports.version = JSON.parse(fs.readFileSync(__dirname + '/package.json')).version
 
 function run(opts,cb){
 

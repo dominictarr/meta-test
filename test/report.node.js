@@ -28,7 +28,7 @@ test ['a Report with a pass'] = function (){
   
   it(r.report)
     .has({
-      filename: __filename
+      name: __filename
     , tests: [ {name: 'pass', failures: [] } ]
     })
 }
@@ -43,7 +43,7 @@ test ['a Report with an several errors'] = function (){
   
   it(r.report)
     .has({
-      filename: __filename
+      name: __filename
     , tests: [ {name: 'error', failures: [it.equal(err),it.equal(err2)] } ]
     })
 }
@@ -60,7 +60,7 @@ test ['a Report with status'] = function (){
   
   it(r.report)
     .has({
-      filename: __filename
+      name: __filename
     , tests: [ 
         { name: 'error'
         , failures: [it.equal(err)]
@@ -84,7 +84,7 @@ test ['a Report with a global error'] = function (){
 
   it(r.report)
     .has({
-      filename: __filename
+      name: __filename
     , tests: it.deepEqual([])
     , failures: [it.equal(err)]
     , status: Report.status.error
@@ -98,7 +98,7 @@ test ['a Report with a global string error'] = function (){
 
   it(r.report)
     .has({
-      filename: __filename
+      name: __filename
     , tests: it.deepEqual([])
     , failures: [it.equal(err)]
     , status: Report.status.error
@@ -134,7 +134,7 @@ test ['a Report with a global string error'] = function (){
 
   it(r.report)
     .has({
-      filename: __filename
+      name: __filename
     , tests: it.deepEqual([])
     , failures: it.deepEqual([undefined])
     , status: Report.status.error
@@ -150,7 +150,7 @@ test ['a Report with a global AssertionError'] = function (){
 
   it(r.report)
     .has({
-      filename: __filename
+      name: __filename
     , tests: it.deepEqual([])
     , failures: it.deepEqual([ass])
     , status: Report.status.failure

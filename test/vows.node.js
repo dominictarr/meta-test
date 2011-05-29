@@ -27,7 +27,6 @@ function vow(name,batch){
   return m.exports  
 }
 
-
 exports ['pass'] = function (finish){
   var reporter = new Report('passing test')
     , expects = new Report('passing test')
