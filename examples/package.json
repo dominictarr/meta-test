@@ -1,2 +1,5 @@
-{ "test-adapters": "./test-adapters" }
+{ "scripts": {
+    "test":"synct test/test-synct-pass.js" 
+  }
+} 
 

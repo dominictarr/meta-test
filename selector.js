@@ -13,62 +13,71 @@ adapter-rule: [rule]
 test-adapters: [rule] //thats the rule
 test-adapters: 'file'
 
+new idea: guess adapter from package.json.
+after checking file extensions .expresso.js etc
+check script: 'expresso test/*.js'
+and then check devDependencies, then check dependencies.
 */
 //returns [{filename: fn, adapter: a },...]
 
 var easy = require('easyfs')
   , fs = require('fs')
   , inspect = require('sys').inspect
+  , adapters = 'expresso,vows,nodeunit,async_testing,asynct,synct,node'.split(',')
 
 exports.select = select 
 exports.find = find
 exports.findAll = findAll
+exports.guess = guess
+exports.adapters = adapters
+  
+function guess (package){
 
-function select (filename, rules) { //returns what adapter to use
-
-  for(var i in rules){
-    var rule = rules[i]
-    if(rule instanceof RegExp){
-      var match = rule(filename)
-      if(match)
-        return match[1]
-    }
-    if('string' === typeof rule)
-      return rule
-    if('function' === typeof rule){
-      var match = rule(filename)
-        if(match)
-      return match      
-    }
-    if('object' === typeof rule){
-        if(rule[filename])
-      return rule[filename]
-    }
-
-    //of couse you can't json regexp's or functions so they will have to be evaled, if they match 
+  if(package.scripts && package.scripts.test){
+    return adapters.filter(function (e){
+      return ~package.scripts.test.indexOf(e)
+    }).shift()
+  }
+  if(package.devDependencies){
+    var first = adapters.filter(function (e){
+      return package.devDependencies[e]
+    }).shift()
+    if(first) return first
+  }
+  if(package.dependencies){
+    var first = adapters.filter(function (e){
+      return package.dependencies[e]
+    }).shift()
+    if(first) return first
   }
 
-  //if we're still here, apply the default rule:
+}
+
+function select (filename, package) { //returns what adapter to use
+
   var e = /^.+\.(\w+)\.\w+$/(filename)
   if(e)
     return e[1]
-  throw new Error ("could not detect test type for: " + filename + ", with rules " + inspect(rules))
-}
+  var g = guess(package)
+  if(g)
+    return g
 
+  throw new Error ("could not detect test type for: " + filename)
+}
 
 var isRegExp = /\/(.*?)\/([gimy]*)/
 
 function isFunction (string){
   if(!~string.indexOf('function'))
     return
-  try{
+  try {
     var f = eval(string)
     if(f instanceof Function)
       return f
-  } catch (err){
-    return    
+  } catch (err) {
+    return
   }
- }
+}
 
 function load (file){
   if(!easy.existsSync(file))
@@ -82,6 +91,9 @@ function parse (file){
     }
 
   var obj = JSON.parse(fs.readFileSync(file,'utf-8'))
+    , g
+  if(g = guess(obj))
+    console.log("GUESSED ADAPTER:", g)
 
   if(obj['test-adapters']){
     var rules = obj['test-adapters']
@@ -112,11 +124,18 @@ function parse (file){
 
 function recurse (dir){
 
-    var pJson = easy.join(dir,'package.json')
-
-    var adapter
-    if(adapter = parse(pJson)){
-      return adapter
+    var path = easy.join(dir,'package.json')
+      , json
+    try{
+      json = '' + fs.readFileSync(path)
+//      console.log(json)
+      try{
+        return eval ('(' + json + ')')
+      } catch (err){
+        console.error((err && err.message), 'in :' + path)
+      }
+    } catch (err){
+      //package.json did not exist at that path.
     }
 
     if(dir &&  dir != '/')
@@ -129,9 +148,8 @@ function find(fn,dir){
   var _fn = fn
   if(fn[0] != '/')
     _fn = easy.join(dir,fn)
-  var rule = recurse(_fn)
-  
-  return {filename: fn, adapter: select(fn,rule)}
+
+  return {filename: fn, adapter: select(fn,recurse(_fn))}
 }
 
 function findAll(filenames){

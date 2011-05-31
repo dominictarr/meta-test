@@ -5,6 +5,7 @@ var it = require('it-is')
   , path = require('path')
   , log = console.log
 
+/*
 exports ['simple selector'] = function (){
 
   var obj = {
@@ -13,7 +14,6 @@ exports ['simple selector'] = function (){
   }
 
   it([
-
     ['path/to/x.adapter.js',['adapter'],'adapter']
   , ['path/to/x.adapter.js',[function (){return 'xyz'}],'xyz']
   , ['path/to/x.matches.js',[/^.+\.(\w+)\.\w+$/],'matches']
@@ -26,7 +26,7 @@ exports ['simple selector'] = function (){
   
   })
 }
-
+*/
 
 exports ['findAll'] = function (){
   var examples = 
@@ -34,26 +34,26 @@ exports ['findAll'] = function (){
       , {filename: "syntax_error.node.js"   , adapter: 'node' }
       , {filename: "pass.node.js"           , adapter: 'node' }
       , {filename: "test-synct-pass.js"     , adapter: 'synct'} 
-      , {filename: "testSomethingAsync.js"  , adapter: 'asynct'} ]
+//      , {filename: "testSomethingAsync.js"  , adapter: 'asynct'} 
+]
 
     , files = 
   examples.map(function (e){
     e.filename = 
       path.join(__dirname,'../examples/test', e.filename)//here is problem! see also adapters/selector.js 130
-      
+
       /*
       OKAY! this is a problem handling both local, relative and absolute paths.
-      
+
       this is causing problems due to different env between this test and invoking selector on cmd line.
-      
       */
-      
+
     return e.filename
   })
 
   var found = selector.findAll(files)
 
-  it(found).has(examples)  
+  it(found).has(examples)
 
 }
 
@@ -63,7 +63,7 @@ exports ['findAll absolute'] = function (){
       , {filename: "syntax_error.node.js"   , adapter: 'node' }
       , {filename: "pass.node.js"           , adapter: 'node' }
       , {filename: "test-synct-pass.js"     , adapter: 'synct'} 
-      , {filename: "testSomethingAsync.js"  , adapter: 'asynct'} ]
+      ]
 
     , files = 
   examples.map(function (e){
@@ -88,7 +88,7 @@ exports ['findAll absolute'] = function (){
 
 exports ['default'] = function (){
   var examples = 
-      [ {filename: "selector.node.js"           , adapter: 'node' }
+      [ {filename: "selector.node.js"    , adapter: 'node' }
       , {filename: "report.expresso.js"  , adapter: 'expresso'} ]
 
     , files = 
@@ -105,7 +105,22 @@ exports ['default'] = function (){
 
 }
 
+exports ['guess adapter from package.json'] = function (){
+var examples = [
+  [ { scripts: {test: 'expresso'}}, 'expresso'],
+  [ { scripts: {test: 'vows test/*.js'}}, 'vows'],
+  [ { devDependencies: {expresso: '0.0.1'}}, 'expresso'],
+  [ { devDependencies: {vows: '0.0.1'}}, 'vows'],
+  [ { scripts: {test: 'nodeunit'}}, 'nodeunit'],
+  [ { scripts: {test: 'async_testing test/*.js'}}, 'async_testing'],
+  [ { devDependencies: {nodeunit: '0.0.1'}}, 'nodeunit'],
+  [ { devDependencies: {async_testing: '0.0.1'}}, 'async_testing'],
+  ]
+  
+  it(examples).every(function (e){ 
+    it(selector.guess(e[0])).equal(e[1])
+  })
 
+}
 
 helper.runSync(exports) //run all tests
-

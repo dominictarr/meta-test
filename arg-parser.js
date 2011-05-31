@@ -5,6 +5,7 @@ var Nihop = require('nih-op')
   , adapter
   , tests = []
   , platform = require('./platform')
+  , versions = platform.list || []
   , version = require('./runner').version
   , parser = new Nihop("meta-test [opts/files]\n", "~~~ Meta-Test (" + version + ") ~~~\n\n  for additional docs see:\n  http://github.com/dominictarr/meta-test\n")
   , pwd = process.env.PWD
@@ -74,11 +75,11 @@ var Nihop = require('nih-op')
   .option('version','v',1).do(function (value){
       version = value
       command = platform.command(value)
-    if(!~platform.list.indexOf(value))
-      throw ("meta-test does not know node version '" +  version + "' \n"
-      + "try one of:\n" + platform.list.join('\n'))
+    if(!~versions.indexOf(value))
+      console.log("meta-test does not know node version '" +  version + "' \n"
+      + "try one of:\n" + versions.join('\n'))
     })
-  .describe('node version to test against\n   one of: [' + require('./platform').list.join(',') + ']','[version]')
+  .describe('node version to test against\n   one of: [' + versions.join(',') + ']','[version]')
 
   .option('timeout','t',1)
   .describe('force test to finish within time. (default is 30 seconds)','[millseconds]')
@@ -99,7 +100,7 @@ function setAdapter(bool,option){
 function addTest (test){
   test = path.join(pwd,test)
   var payload
-  if(adapter)
+    if(adapter)
     payload = {filename: test, adapter: adapter }
   else 
     payload = selector.find(test,pwd)
