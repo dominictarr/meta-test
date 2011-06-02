@@ -62,7 +62,7 @@ exports ['pass'] = function (finish){
 //        console.log(test.finish.toString())
           process.nextTick(test.finish)
         },500)
-      },reporter)
+      },reporter, helper.checkCall(function (){},200))
 
   setTimeout(done,200)
 
@@ -89,7 +89,7 @@ exports ['error'] = function (finish){
             throw new Error ("ASYNC ERROR") 
           },0)
         },500)
-      },reporter)
+      },reporter, helper.checkCall(function (){},200))
 
   setTimeout(done,200)
 
@@ -114,7 +114,7 @@ exports ['failure'] = function (finish){
   , 'fail sync': helper.checkCall(function (test){
       it(0).equal('sync')
     },500)
-  },reporter)
+  },reporter, helper.checkCall(function (){},200))
 
   setTimeout(done,200)
 
@@ -139,7 +139,7 @@ exports ['double finish'] = function (finish){
       process.nextTick(test.finish)
       process.nextTick(test.finish)
     },500)
-  },reporter)
+  },reporter, helper.checkCall(function (){},200))
 
   setTimeout(helper.try(done),200)
 
@@ -173,7 +173,7 @@ exports ['double error'] = function (finish){
       process.nextTick(function (){throw new Error("FIRST ERROR")})
       process.nextTick(function (){throw new Error("SEOND ERROR")})
     },200)
-  },reporter) 
+  },reporter, helper.checkCall(function (){},200)) 
 
   setTimeout(helper.try(done),300)
 
@@ -203,7 +203,7 @@ exports ['error if tests not executed'] = function (finish){
     }
   , 'not called 2': function (test){
     }
-  },reporter) 
+  },reporter, function(){})//the tests will not finish so it won't callback. 
 
   setTimeout(helper.try(done),300)
 
@@ -269,7 +269,7 @@ exports ['user can catch async errors'] = function (finish){
         throw error
       })
     }
-  },reporter) 
+  },reporter, helper.checkCall(function (){},200)) 
 
   setTimeout(helper.try(done),300)
 
@@ -333,7 +333,7 @@ exports ['user can catch async errors - with async_testing api'] = function (fin
         throw error
       })
     }
-  },reporter) 
+  },reporter, helper.checkCall(function (){},200)) 
 
   setTimeout(helper.try(done),300)
 

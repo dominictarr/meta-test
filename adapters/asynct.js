@@ -10,7 +10,7 @@ var assert = require('assert')
 
 exports.run = run
 
-function run (tests,reporter){
+function run (tests,reporter,callback){
   var status = {}
   var setup = [], teardown = []
   var names = Object.keys(tests).filter(function (name){
@@ -76,7 +76,7 @@ function run (tests,reporter){
     }
   })
 
-  ctrl.seq(tests,function (err){throw err})()
+  ctrl.seq(tests,function (err){throw err}).done(callback).go()
   
   return function (){
     process.removeAllListeners('uncaughtException')
