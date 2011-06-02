@@ -28,7 +28,7 @@ exports ['pass'] = function (finish){
     'pass': function (){
       ran = true
     }
-  },reporter)
+  },reporter,helper.checkCall(function (){},200))
 
   shutdown()
 
@@ -51,7 +51,7 @@ exports ['fail'] = function (finish){
     'fail': function (){
       assert.ok(false,"INTENSIONAL FAIL")
     }
-  },reporter)
+  },reporter,helper.checkCall(function (){},200))
 
   shutdown()
 
@@ -76,7 +76,7 @@ exports ['error'] = helper.try(function (finish){
     'error': function (){
       throw new Error("INTENSIONAL ERROR")
     }
-  },reporter)
+  },reporter,helper.checkCall(function (){},200))
 
   shutdown()
 
@@ -99,7 +99,7 @@ exports ['all'] = helper.try(function (finish){
     'pass' : function () { }
   , 'fail' : function () { assert.ok(false,"INTENSIONAL FAIL") }
   , 'error': function () { throw new Error("INTENSIONAL ERROR") }
-  } , reporter)
+  } , reporter,helper.checkCall(function (){},200))
 
   shutdown()
 
@@ -142,7 +142,7 @@ exports ['compatible with old and new expresso API'] = helper.try(function (fini
       it(before).function()
           
   }
-  } , reporter)
+  } , reporter,helper.checkCall(function (){},200))
 
   shutdown()
 

@@ -23,7 +23,7 @@ exports ['pass'] = function (finish){
   , 'pass2': function (test){
       test.done()
     }
-  },reporter)
+  },reporter,helper.checkCall(function (){},200))
 
   setTimeout(done,200)
   
@@ -46,7 +46,7 @@ exports ['error'] = function (finish){
       throw new Error("INTENSIONAL ERROR 1")
       test.done()
     }
-  },reporter)
+  },reporter,helper.checkCall(function (){},200))
 
   setTimeout(done,200)
   
@@ -78,7 +78,7 @@ exports ['fail'] = function (finish){
       test.ok(false, "not OK 2")
       test.done()
     }
-  },reporter)
+  },reporter,helper.checkCall(function (){},200))
 
   setTimeout(done,200)
   
@@ -116,7 +116,7 @@ exports ['did not call done'] = function (finish){
       test.ok(false, "not OK 2")
       test.done()
     }*/
-  },reporter)
+  },reporter,function (){})
 
   setTimeout(done,200)
   
@@ -148,7 +148,7 @@ exports ['did not call done2'] = function (finish){
       test.ok(false, "not OK 1")
       test.ok(false, "not OK 2")
     }
-  },reporter)
+  },reporter,function (){})
 
   setTimeout(done,200)
   

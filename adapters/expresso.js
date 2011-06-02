@@ -17,7 +17,7 @@ function copy(from,to){
 exports.run = run 
 
 
-function run (tests,reporter){
+function run (tests,reporter,callback){
 
   //load expresso into this closure
 
@@ -51,6 +51,8 @@ function run (tests,reporter){
   process.emit = orig
 
   runSuite(reporter.filename,tests)
+
+  callback() //this will only work for sync tests
 
   return function (){
     process.emit('beforeExit')

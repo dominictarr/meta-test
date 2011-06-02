@@ -4,7 +4,7 @@ var nodeunit = require('nodeunit/lib/core')
 
 exports.run = run
 
-function run (tests,reporter){
+function run (tests,reporter,callback){
 
   var finished = {}
   
@@ -24,7 +24,7 @@ function run (tests,reporter){
     moduleDone: function (name, assertions) {
 
     }
-  },function (){})
+  },callback)
 
   return function (){ 
 

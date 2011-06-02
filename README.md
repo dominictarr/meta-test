@@ -90,17 +90,18 @@ to use npm to run tests programmaticially:
 
 ##Adapter API##
 
-a test adapter needs just one function, `run(tests,reporter)` 
+a test adapter needs just one function, `run(tests,reporter,callback)` 
 it has just two arguments:
 
   * `tests`: whatever the unit test exported
   * `reporter`: the meta-test report builder.
+  * `callback`: callback when it thinks the test is done.
 
 it must return a shutdown function.
 
 the shutdown function can be used to check that all the tests where run, etc.
 
 the shutdown will be called when the test runner is confidant that the test is complete (i.e. at exit). 
-the shutdown function *must* be synchronous.
+the shutdown function *must* be synchronous. this is to allow for weird problems with async tests. (like accidentially declaring the test done)
 
 see meta-test/adapters for examples of using the Adapter API

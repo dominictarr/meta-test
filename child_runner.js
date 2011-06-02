@@ -33,7 +33,7 @@ if(payload.remaps)
 
     var adapter = require(__dirname + '/adapters/' +payload.adapter)
 
-    shutdown = adapter.run(tests,reporter)
+    shutdown = adapter.run(tests,reporter, function (){})
   }
 
   process.on('SIGTSTP',function (){
