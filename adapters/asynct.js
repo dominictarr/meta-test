@@ -66,7 +66,6 @@ function run (tests,reporter,callback){
       
       try{ 
         status[name] = 'started'
-        console.log(test)
         test.call(null,tester) 
         if(isTeardown(name))
           next()//teardown is sync! .. 

@@ -71,12 +71,13 @@ exports ['setup pass teardown'] = function (finish){
       , 'pass2': helper.try(function (test){
           process.nextTick(test.finish)
         },500)
-      },reporter)
+      },reporter,function (){})
 
   setTimeout(done,200)
 
   function done(){
     shutdown()
+
     check
     ( reporter.report, 'pass','success',
       [ isPass('pass1'), isPass('pass2') ] )
@@ -109,7 +110,7 @@ exports['setup fail error teardown'] = function (finish){
       , 'error': helper.checkCall(function (test){
           throw new Error('INTENSIONAL ERROR')
         },500)
-      },reporter)
+      },reporter,function (){})
 
   setTimeout(done,200)
 

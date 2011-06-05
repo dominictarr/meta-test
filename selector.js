@@ -28,6 +28,7 @@ var easy = require('easyfs')
 exports.select = select 
 exports.find = find
 exports.findAll = findAll
+exports.findAdapter = findAdapter
 exports.guess = guess
 exports.adapters = adapters
   
@@ -50,7 +51,7 @@ function guess (package){
     }).shift()
     if(first) return first
   }
-
+  return 'node'
 }
 
 function select (filename, package) { //returns what adapter to use
@@ -142,14 +143,15 @@ function recurse (dir){
       return recurse(easy.join(dir,'..'))
 }
 
-
-
 function find(fn,dir){
   var _fn = fn
   if(fn[0] != '/')
     _fn = easy.join(dir,fn)
 
   return {filename: fn, adapter: select(fn,recurse(_fn))}
+}
+function findAdapter(file){//should be an 
+  return find(file,process.cwd()).adapter
 }
 
 function findAll(filenames){

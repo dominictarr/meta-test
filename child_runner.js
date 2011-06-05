@@ -18,7 +18,7 @@ var depends = require('./depends')
     , shutdown
     , failed
     , tests
-
+    , adapter = 'node'
 
 if(payload.remaps)
   depends.remap(payload.remaps)
@@ -31,7 +31,7 @@ if(payload.remaps)
   }
   if(!failed && payload.adapter) {
 
-    var adapter = require(__dirname + '/adapters/' +payload.adapter)
+    adapter = require(__dirname + '/adapters/' +payload.adapter)
 
     shutdown = adapter.run(tests,reporter, function (){})
   }
@@ -44,7 +44,7 @@ if(payload.remaps)
   function exit (){
   
     if(shutdown) shutdown()
-
+    reporter.meta('adapter', payload.adapter)
     reporter.meta('depends',depends.sorted(__dirname + '/loader.js').map(function (e){
       return {
         filename: e.filename
@@ -54,7 +54,7 @@ if(payload.remaps)
     }))
 
     fs.writeFileSync(payload.tempfile,untangle.stringify(reporter.report))
-  
+
   }
 
   process.on('exit',exit)

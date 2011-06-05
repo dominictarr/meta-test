@@ -1,6 +1,20 @@
 
+/**
+  it's coming time for an overhaul of how runners are setup.
+  better to provide support for running all tests and rolling them into one big report. (with status and totals)
+  also, i've since learnt about process.cwd() etc. 
+  
+  adapters should be detected here (and should they even be called adapters)
+  
+  also, I want to pull adapters out into thier own modules 
+  
+  (that will be a big reorg.)
+
+*/
+
 var Report = require('./report')
   , Plugins = require('./plugins')
+  , selector = require('./selector')
   , fs = require('fs')
   , untangle = require('trees').untangle
 var spawn = require('child_process').spawn
@@ -13,6 +27,8 @@ exports.version = JSON.parse(fs.readFileSync(__dirname + '/package.json')).versi
 function run(opts,cb){
 
   opts.tempfile = '/tmp/test_' + Math.round(Math.random()*10000)
+  if(!opts.adapter)
+    opts.adapter = selector.findAdapter(opts.filename)
 
   var child = spawn((opts.command || process.execPath), [ __dirname + '/child_runner.js', JSON.stringify(opts) ])
     , stderr = ''
@@ -54,8 +70,10 @@ function run(opts,cb){
           cb(null,report)
         } catch (err){
           cb(null,{ filename: opts.filename
+            , name: opts.filename
             , tests: []
             , status : 'error'
+            , meta: {adapter: opts.adapter || 'node'}
             , failures: failures
             , version: opts.version
             })

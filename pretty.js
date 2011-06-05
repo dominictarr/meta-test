@@ -59,7 +59,8 @@ function tests(tests){
 }
 
 function toString(report){
-
+  if(!report.name)
+    console.log(report)
   var fn = report.name.replace(process.env.PWD + '/','')
 //  console.log(report.version)
   return para

@@ -12,9 +12,11 @@ exports ['run a file and make a report'] = function (finish){
   runner.run({filename:testFile },helper.try(cb,1000))
   
   function cb(err,report){
+    console.log(report)
     it(report)
       .has({
         filename: testFile
+      , meta: {adapter: 'node'}
       , tests: is.deepEqual([])
       , failures: is.deepEqual([])
       , status: 'success'
@@ -33,6 +35,7 @@ function hasError(testFile,check,done){
     it(report)
       .has({
         filename: testFile
+      , meta: {adapter: 'node'}
       , tests: is.deepEqual([])
       , failures: check
       , status: 'error'
@@ -107,6 +110,7 @@ exports ['defaults to current version'] = function (finish){
     it(report)
       .has({
         filename: testFile
+      , meta: {adapter: 'node'}
       , tests: is.deepEqual([])
       , failures: is.deepEqual([])
       , status: 'success'
@@ -115,6 +119,29 @@ exports ['defaults to current version'] = function (finish){
     finish()
   }
 }
+
+function checkAdapterDetection(testFile,adapter){
+
+  exports['detects adapter if none given:' + adapter] = function (finish){
+
+    function cb(err,report){
+    console.log(report)
+      it(report)
+        .has({
+          filename: testFile
+        , meta: {adapter: adapter}
+        , tests: it.property('length',it.ok())
+        , version: process.version
+        })
+      finish()
+    }
+
+    runner.run({filename:testFile},helper.try(cb,1000))
+  }
+}
+
+checkAdapterDetection('./examples/test/simple.nodeunit.js','nodeunit')
+checkAdapterDetection('./examples/test/simple.vows.js','vows')
 
 
 helper.runAsync(exports)
