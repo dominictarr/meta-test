@@ -150,8 +150,8 @@ function find(fn,dir){
 
   return {filename: fn, adapter: select(fn,recurse(_fn))}
 }
-function findAdapter(file){//should be an 
-  return find(file,process.cwd()).adapter
+function findAdapter(file){//should be an
+  return find(file,file).adapter//file should be an absolute path
 }
 
 function findAll(filenames){
