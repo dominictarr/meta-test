@@ -4,8 +4,8 @@
 NEXT: add plugins.
 */
 
-var depends = require('./depends')
-  , Report = require('./report')
+var /*depends = require('./depends')
+  ,*/ Report = require('./report')
   , fs = require('fs')
   , log = console.log
   , untangle = require('trees').untangle
@@ -20,9 +20,9 @@ var depends = require('./depends')
     , tests
     , adapter = 'node'
 
-if(payload.remaps)
+/*if(payload.remaps)
   depends.remap(payload.remaps)
-
+*/
   try{
     tests = loader.load(payload.filename)
   } catch(error){
@@ -45,13 +45,13 @@ if(payload.remaps)
   
     if(shutdown) shutdown()
     reporter.meta('adapter', payload.adapter)
-    reporter.meta('depends',depends.sorted(__dirname + '/loader.js').map(function (e){
+/*    reporter.meta('depends',depends.sorted(__dirname + '/loader.js').map(function (e){
       return {
         filename: e.filename
       , resolves: e.resolves
       }
     
-    }))
+    }))*/
 
     fs.writeFileSync(payload.tempfile,untangle.stringify(reporter.report))
 
