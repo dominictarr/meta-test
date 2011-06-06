@@ -62,8 +62,10 @@ function select (filename, package) { //returns what adapter to use
   var g = guess(package)
   if(g)
     return g
+  
+  return 'node'
 
-  throw new Error ("could not detect test type for: " + filename)
+//  throw new Error ("could not detect test type for: " + filename)
 }
 
 var isRegExp = /\/(.*?)\/([gimy]*)/
