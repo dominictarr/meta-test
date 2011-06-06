@@ -21,7 +21,7 @@ function styleError (error){
     return '' + error
   if(error.stack)
     return error.stack
-  return '' + error
+  return render(error)
 }
 
 function para (){
