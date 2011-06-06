@@ -27,9 +27,9 @@ exports.version = JSON.parse(fs.readFileSync(__dirname + '/package.json')).versi
 function run(opts,cb){
 
   opts.tempfile = '/tmp/test_' + Math.round(Math.random()*10000)
-  if(!opts.adapter)
-    opts.adapter = selector.findAdapter(opts.filename)
-
+  if(!opts.adapter){
+    opts.adapter = selector.findAdapter(opts.filename) 
+  }
   var child = spawn((opts.command || process.execPath), [ __dirname + '/child_runner.js', JSON.stringify(opts) ])
     , stderr = ''
     , failures = []
