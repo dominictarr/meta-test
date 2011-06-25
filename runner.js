@@ -38,7 +38,7 @@ function run(opts,cb){
   child.stderr.on('data',function(e){ stderr += '' + e; process.stderr.write(e) })
 
   var timeToRun = opts.timeout || 30e3
-    , timer = 
+    , timer =
         setTimeout(function stop (){
           child.kill('SIGTSTP')
           failures.push(new Error("test '" + opts.filename + "' did not complete in under " + timeToRun + " milliseconds"))
@@ -80,4 +80,5 @@ function run(opts,cb){
         }
       }
   })
+  return child //return the child process so that it is possible to extract the output
 }

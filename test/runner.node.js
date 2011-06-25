@@ -9,7 +9,7 @@ var runner = require('../runner')
 exports ['run a file and make a report'] = function (finish){
   var testFile = path.join(__dirname, '..','examples/test/pass.node.js')
 
-  runner.run({filename:testFile },helper.try(cb,1000))
+  var cp = runner.run({filename:testFile },helper.try(cb,1000))
   
   function cb(err,report){
     console.log(report)
@@ -23,13 +23,19 @@ exports ['run a file and make a report'] = function (finish){
       })
     finish()
   }
+
+  it(cp).has({
+    stdout: it.property('on',it.function()),
+    stderr: it.property('on',it.function())
+  })
+
 }
 
 //*/
 
 function hasError(testFile,check,done){
   testFile = path.join(__dirname, '..',testFile)
-  runner.run({filename:testFile },helper.try(cb,1000))
+  var cp = runner.run({filename:testFile },helper.try(cb,1000))
   
   function cb(err,report){
     it(report)
@@ -42,6 +48,7 @@ function hasError(testFile,check,done){
       })
     done()
   }
+
 }
 
 exports ['run a file that errors weird'] = function (finish) {
@@ -62,7 +69,7 @@ exports ['run a file with syntax error'] = function (finish) {
 
 exports ['run dummy-adapter'] = function (finish){
 
-  runner.run({filename: './examples/test/pass.node.js', adapter: '../examples/dummy-adapter' }, check )
+  var cp = runner.run({filename: './examples/test/pass.node.js', adapter: '../examples/dummy-adapter' }, check )
   
   function check (err,report){
     it(report)
@@ -79,6 +86,7 @@ exports ['run dummy-adapter'] = function (finish){
       })
     finish()
   }
+
 }
 //*/
 exports ['stop child after timeout'] = function (finish){
