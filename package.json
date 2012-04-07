@@ -21,7 +21,6 @@
   , "ctrlflow": ">=0.0.3"
   , "nodeunit": ">=0.5.0"
   , "vows": ">=0.5.0"
-  , "expresso": ">=0.7.0"
   , "trees": "0.0.x"
   },
   "devDependencies": {
